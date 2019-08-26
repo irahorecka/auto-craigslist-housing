@@ -11,8 +11,6 @@ import cl_search_dict as clsd
 import selection_key as sk
 import matplotlib.pyplot as plt
 os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv')
-sbs.exec_search()
-
 
 class StatAnalysis:
     def __init__(self, dtfm):
@@ -107,6 +105,9 @@ def find_rooms(dtfm):
     for_export.to_csv('significant posts.csv', index = False)
     new_find.to_csv('new_post.csv', index = False)
     return new_find
+
+def execute_search():
+    sbs.exec_search()
 #print(temp_dtfm['Price'].describe())
 #print((temp_dtfm.Price.str[1:].astype(float)).std())
 
