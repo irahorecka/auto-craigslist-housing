@@ -43,12 +43,24 @@ class DataPrep:
         self.dtfm = dtfm
     
     def title_key(self):
+        def cut_time():
+            append_list = list()
+            for index,row in self.dtfm.iterrows():
+                if len(row['Time Posted']) == 5:
+                    append_list.append(int(row['Time Posted'][:2]))
+                elif len(row['Time Posted']) == 4:
+                    append_list.append(int(row['Time Posted'][:1]))
+            return append_list
         self.dtfm['Title Key'] = self.dtfm['Title'] + ' _ ' + self.dtfm['Location']
+        self.dtfm['Num Time'] = pd.Series(cut_time())
         return self.dtfm
 
+
     def drop_and_sort(self):
-        self.dtfm = self.dtfm.drop(['Title Key'], axis = 1)
-        self.dtfm = self.dtfm.sort_values('Date Posted', ascending = False, inplace = False)
+        #set time posted as numeric - bonus see if you can make it a one-liner
+        self.dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = True, kind = 'quicksort')
+        #self.dtfm.sort_values(by = 'Num Time', ascending = False, inplace = True, kind = 'quicksort')
+        self.dtfm = self.dtfm.drop(['Title Key', 'Num Time'], axis = 1)
         return self.dtfm
 
 def compile_dtfm():
@@ -59,7 +71,7 @@ def compile_dtfm():
             #make key for title + location and remove duplicates
             concat_dtfm['Title Key'] = concat_dtfm['Title'] + ' _ ' + concat_dtfm['Location']
             #change price to float64
-            concat_dtfm['Price'] = concat_dtfm.Price.str[1:].astype(float)
+            concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
             dtfm = dtfm.append(concat_dtfm, ignore_index=True)
             dtfm = dtfm.drop_duplicates(subset = ['Title Key'])
         else:
