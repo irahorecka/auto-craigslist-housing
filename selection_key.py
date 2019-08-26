@@ -4,3 +4,5 @@ state_keys = ['california']
 selected_reg = ['sfbay']
 selected_cat = ['sub', 'roo']
 district_list = ['berkeley','oakland']
+
+name = 'ira'
