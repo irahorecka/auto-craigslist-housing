@@ -3,11 +3,11 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import pandas_single_bedroom as psb
+import selection_key as sk
 
 
 sender_email = "ira.python@gmail.com"
 receiver_email = "ira89@icloud.com"
-#password = input("Type your password and press enter:")
 password = input('Gmail password: ')
 
 message = MIMEMultipart("alternative")
@@ -92,7 +92,7 @@ class SendEmail:
 data_send = PrepEmail(data_to_email)
 text_body = ""
 html_body = ""
-name = 'robert'
+name = sk.name
 numbering = 1
 if len(data_to_email) == 1:
     for index,row in data_to_email.iterrows():
