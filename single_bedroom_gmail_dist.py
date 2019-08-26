@@ -93,6 +93,7 @@ data_send = PrepEmail(data_to_email)
 text_body = ""
 html_body = ""
 name = 'robert'
+numbering = 1
 if len(data_to_email) == 1:
     for index,row in data_to_email.iterrows():
         location = row['Location']
@@ -116,9 +117,9 @@ elif len(data_to_email) > 1:
         url = row['URL']
         title = row['Title']
 
-        text_body += f'In {location.title()} for ${price} a month. {url}\n'
-        html_body += f'In {location.title()} for ${price} a month.<br>Posting: <a href="{url}">{title.title()}</a><br>'
-
+        text_body += f'{numbering}) In {location.title()} for ${price} a month. {url}\n'
+        html_body += f'{numbering}) In {location.title()} for ${price} a month.<br>Posting: <a href="{url}">{title.title()}</a><br>'
+        numbering += 1
     text, html = data_send.multiple_entry()
     text = text.format(body = text_body, name = name.title())
     html = html.format(body = html_body, name = name.title())
