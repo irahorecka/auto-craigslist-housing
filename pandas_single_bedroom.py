@@ -1,6 +1,6 @@
-#Look for all sublets and rooms in sfbay craigslist, sort out statistically significant pricings, i.e. mean - 2sd after outlier removal
-#Afterwords, only sort out districts of interest, i.e. berkeley, oakland, fremont.
-#NEXT: Sort the dataframe to return only columns of interest
+#Look for all sublets and rooms in sfbay craigslist, sort out statistically significant pricings, i.e. mean - 1sd after outlier removal
+#Afterwords, only sort out districts of interest, e.g. berkeley, oakland, fremont.
+#NEXT: Sort the dataframe to return only columns of interest - complete
 
 import pandas as pd
 import os
@@ -10,7 +10,7 @@ import single_bedroom_sfbay_01_ver as sbs
 import cl_search_dict as clsd
 import selection_key as sk
 import matplotlib.pyplot as plt
-os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv')
+os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv/CL Files')
 
 class StatAnalysis:
     def __init__(self, dtfm):
@@ -74,6 +74,7 @@ def compile_dtfm():
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
             dtfm = dtfm.append(concat_dtfm, ignore_index=True)
             dtfm = dtfm.drop_duplicates(subset = ['Title Key'])
+            os.remove(filename)
         else:
             pass
     dtfm = dtfm.drop(['Bedrooms', 'Post ID', 'Repost of (Post ID)', 'Post has Image', 'Post has Map', 'Post has Geotag', 'Title Key'], axis = 1)
@@ -81,7 +82,6 @@ def compile_dtfm():
 #print(dtfm['Price'].describe())
 
 def find_rooms(dtfm):
-    #Fix below, this is hard-coded - UPDATE: FIXED
     cat_val = list()
     for i in sk.selected_cat:
         cat_val.append(clsd.cat_dict[i])
@@ -121,8 +121,6 @@ def find_rooms(dtfm):
 
 def execute_search():
     sbs.exec_search()
-#print(temp_dtfm['Price'].describe())
-#print((temp_dtfm.Price.str[1:].astype(float)).std())
 
 #data = compile_dtfm()
 #find_rooms(data)
