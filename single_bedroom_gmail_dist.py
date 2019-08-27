@@ -5,7 +5,6 @@ from email.mime.multipart import MIMEMultipart
 import pandas_single_bedroom as psb
 import selection_key as sk
 
-
 sender_email = "ira.python@gmail.com"
 receiver_email = "ira89@icloud.com"
 password = input('Gmail password: ')
@@ -15,7 +14,6 @@ message["Subject"] = "Craigslist Findings"
 message["From"] = sender_email
 message["To"] = receiver_email
 
-#slight bug in creating updated file, i.e. data_to_email - revise this
 psb.execute_search()
 data = psb.compile_dtfm()
 data_to_email = psb.find_rooms(data)

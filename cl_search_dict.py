@@ -5,7 +5,7 @@ room_filters = {'private_room' : True, #bool
     'cats_ok' : None, #bool
     'dogs_ok' : None, #bool
     'min_price' : 500,
-    'max_price' : 1000,
+    'max_price' : 1200,
     'min_ft2' : None,
     'max_ft2' : None,
     'min_bedrooms' : None,
