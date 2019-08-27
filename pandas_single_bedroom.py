@@ -112,7 +112,8 @@ def find_rooms(dtfm):
 
     old_file = DataPrep(old_file).drop_and_sort()
     for_export = DataPrep(for_export).drop_and_sort()
-    new_find = for_export[~for_export.isin(old_file)].dropna()
+    new_find = for_export.append(old_file, ignore_index = True)
+    new_find = new_find.drop_duplicates(subset = ['Title', 'Location'], keep = False)
 
     for_export.to_csv('significant posts.csv', index = False)
     new_find.to_csv('new_post.csv', index = False)
