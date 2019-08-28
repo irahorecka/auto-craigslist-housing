@@ -77,7 +77,7 @@ def compile_dtfm():
             os.remove(filename)
         else:
             pass
-    dtfm = dtfm.drop(['Bedrooms', 'Post ID', 'Repost of (Post ID)', 'Post has Image', 'Post has Map', 'Post has Geotag', 'Title Key'], axis = 1)
+    dtfm = dtfm.drop(['Bedrooms', 'Post ID', 'Repost of (Post ID)', 'Post has Image', 'Post has Geotag', 'Title Key'], axis = 1)
     return dtfm
 #print(dtfm['Price'].describe())
 

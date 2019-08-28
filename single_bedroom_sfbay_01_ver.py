@@ -54,12 +54,12 @@ def exec_search():
             for reg, reg_name in eval(f'sr.{state}')["focus_dist"].items():
                 if reg in sk.selected_reg:
                     for sub_reg in reg_name:
-                        header_list = [f'CL State{code_break}CL Region{code_break}CL District{code_break}Housing Category{code_break}Post ID{code_break}Repost of (Post ID){code_break}Title{code_break}URL{code_break}Date Posted{code_break}Time Posted{code_break}Price{code_break}Location{code_break}Post has Image{code_break}Post has Map{code_break}Post has Geotag{code_break}Bedrooms{code_break}Area']    
+                        header_list = [f'CL State{code_break}CL Region{code_break}CL District{code_break}Housing Category{code_break}Post ID{code_break}Repost of (Post ID){code_break}Title{code_break}URL{code_break}Date Posted{code_break}Time Posted{code_break}Price{code_break}Location{code_break}Post has Image{code_break}Post has Geotag{code_break}Bedrooms{code_break}Area']    
                         for cat, cat_name in clsd.cat_dict.items():
                             if cat in sk.selected_cat:
                                 housing_result = CL_Housing_Select(reg, cat, clsd.room_filters)
                                 large_region = housing_result.large_region(sub_reg)
-                                header_list.extend([f"{state.title()}{code_break}{reg}{code_break}{sub_reg}{code_break}{cat_name}{code_break}{i['id']}{code_break}{i['repost_of']}{code_break}{i['name']}{code_break}{i['url']}{code_break}{i['datetime'][0:10]}{code_break}{i['datetime'][11:]}{code_break}{i['price']}{code_break}{i['where']}{code_break}{i['has_image']}{code_break}{i['has_map']}{code_break}{i['geotag']}{code_break}{i['bedrooms']}{code_break}{i['area']}" for i in large_region.get_results(sort_by='newest')])
+                                header_list.extend([f"{state.title()}{code_break}{reg}{code_break}{sub_reg}{code_break}{cat_name}{code_break}{i['id']}{code_break}{i['repost_of']}{code_break}{i['name']}{code_break}{i['url']}{code_break}{i['datetime'][0:10]}{code_break}{i['datetime'][11:]}{code_break}{i['price']}{code_break}{i['where']}{code_break}{i['has_image']}{code_break}{i['geotag']}{code_break}{i['bedrooms']}{code_break}{i['area']}" for i in large_region.get_results(sort_by='newest')])
                                 print(state, sub_reg, cat)
                         housing_result.write_to_file(header_list, sub_reg, state)
                         focus_list.append(reg)
@@ -69,12 +69,12 @@ def exec_search():
                     continue
                 else:
                     try:
-                        header_list = [f'CL State{code_break}CL Region{code_break}CL District{code_break}Housing Category{code_break}Post ID{code_break}Repost of (Post ID){code_break}Title{code_break}URL{code_break}Date Posted{code_break}Time Posted{code_break}Price{code_break}Location{code_break}Post has Image{code_break}Post has Map{code_break}Post has Geotag{code_break}Bedrooms{code_break}Area']    
+                        header_list = [f'CL State{code_break}CL Region{code_break}CL District{code_break}Housing Category{code_break}Post ID{code_break}Repost of (Post ID){code_break}Title{code_break}URL{code_break}Date Posted{code_break}Time Posted{code_break}Price{code_break}Location{code_break}Post has Image{code_break}Post has Geotag{code_break}Bedrooms{code_break}Area']    
                         for cat, cat_name in clsd.cat_dict.items():
                             if cat in sk.selected_cat:
                                 housing_result = CL_Housing_Select(reg, cat, clsd.room_filters)
                                 small_region = housing_result.small_region()
-                                header_list.extend([f"{state.title()}{code_break}{reg}{code_break}{reg_name}{code_break}{cat_name}{code_break}{i['id']}{code_break}{i['repost_of']}{code_break}{i['name']}{code_break}{i['url']}{code_break}{i['datetime'][0:10]}{code_break}{i['datetime'][11:]}{code_break}{i['price']}{code_break}{i['where']}{code_break}{i['has_image']}{code_break}{i['has_map']}{code_break}{i['geotag']}{code_break}{i['bedrooms']}{code_break}{i['area']}" for i in small_region.get_results(sort_by='newest')])
+                                header_list.extend([f"{state.title()}{code_break}{reg}{code_break}{reg_name}{code_break}{cat_name}{code_break}{i['id']}{code_break}{i['repost_of']}{code_break}{i['name']}{code_break}{i['url']}{code_break}{i['datetime'][0:10]}{code_break}{i['datetime'][11:]}{code_break}{i['price']}{code_break}{i['where']}{code_break}{i['has_image']}{code_break}{i['geotag']}{code_break}{i['bedrooms']}{code_break}{i['area']}" for i in small_region.get_results(sort_by='newest')])
                                 print(state, reg, cat)
                         housing_result.write_to_file(header_list, reg_name, state)
                     except ValueError:
