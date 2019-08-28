@@ -94,5 +94,4 @@ def exec_search():
 
     t1 = time.time()
     print(f"Run time: {'%.2f' % (t1 - t0)} sec")
-exec_search()
     
