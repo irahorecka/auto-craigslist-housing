@@ -53,16 +53,28 @@ def exec_search():
         if 'focus_dist' in eval(f'sr.{state}'):
             for reg, reg_name in eval(f'sr.{state}')["focus_dist"].items():
                 if reg in sk.selected_reg:
-                    for sub_reg in reg_name:
-                        header_list = [f'CL State{code_break}CL Region{code_break}CL District{code_break}Housing Category{code_break}Post ID{code_break}Repost of (Post ID){code_break}Title{code_break}URL{code_break}Date Posted{code_break}Time Posted{code_break}Price{code_break}Location{code_break}Post has Image{code_break}Post has Geotag{code_break}Bedrooms{code_break}Area']    
-                        for cat, cat_name in clsd.cat_dict.items():
-                            if cat in sk.selected_cat:
-                                housing_result = CL_Housing_Select(reg, cat, clsd.room_filters)
-                                large_region = housing_result.large_region(sub_reg)
-                                header_list.extend([f"{state.title()}{code_break}{reg}{code_break}{sub_reg}{code_break}{cat_name}{code_break}{i['id']}{code_break}{i['repost_of']}{code_break}{i['name']}{code_break}{i['url']}{code_break}{i['datetime'][0:10]}{code_break}{i['datetime'][11:]}{code_break}{i['price']}{code_break}{i['where']}{code_break}{i['has_image']}{code_break}{i['geotag']}{code_break}{i['bedrooms']}{code_break}{i['area']}" for i in large_region.get_results(sort_by='newest')])
-                                print(state, sub_reg, cat)
-                        housing_result.write_to_file(header_list, sub_reg, state)
-                        focus_list.append(reg)
+                    if reg == 'newyork' or reg == 'boston':
+                        for sub_reg in reg_name:
+                            header_list = [f'CL State{code_break}CL Region{code_break}CL District{code_break}Housing Category{code_break}Post ID{code_break}Repost of (Post ID){code_break}Title{code_break}URL{code_break}Date Posted{code_break}Time Posted{code_break}Price{code_break}Location{code_break}Post has Image{code_break}Post has Geotag{code_break}Bedrooms{code_break}Area']
+                            for cat, cat_name in clsd.apa_dict.items():
+                                if cat in sk.selected_cat:
+                                    housing_result = CL_Housing_Select(reg, cat, clsd.room_filters)
+                                    large_region = housing_result.large_region(sub_reg)
+                                    header_list.extend([f"{state.title()}{code_break}{reg}{code_break}{sub_reg}{code_break}{cat_name}{code_break}{i['id']}{code_break}{i['repost_of']}{code_break}{i['name']}{code_break}{i['url']}{code_break}{i['datetime'][0:10]}{code_break}{i['datetime'][11:]}{code_break}{i['price']}{code_break}{i['where']}{code_break}{i['has_image']}{code_break}{i['geotag']}{code_break}{i['bedrooms']}{code_break}{i['area']}" for i in large_region.get_results(sort_by='newest')])
+                                    print(state, sub_reg, cat)
+                            housing_result.write_to_file(header_list, sub_reg, state)
+                            focus_list.append(reg)
+                    else:
+                        for sub_reg in reg_name:
+                            header_list = [f'CL State{code_break}CL Region{code_break}CL District{code_break}Housing Category{code_break}Post ID{code_break}Repost of (Post ID){code_break}Title{code_break}URL{code_break}Date Posted{code_break}Time Posted{code_break}Price{code_break}Location{code_break}Post has Image{code_break}Post has Geotag{code_break}Bedrooms{code_break}Area']    
+                            for cat, cat_name in clsd.cat_dict.items():
+                                if cat in sk.selected_cat:
+                                    housing_result = CL_Housing_Select(reg, cat, clsd.room_filters)
+                                    large_region = housing_result.large_region(sub_reg)
+                                    header_list.extend([f"{state.title()}{code_break}{reg}{code_break}{sub_reg}{code_break}{cat_name}{code_break}{i['id']}{code_break}{i['repost_of']}{code_break}{i['name']}{code_break}{i['url']}{code_break}{i['datetime'][0:10]}{code_break}{i['datetime'][11:]}{code_break}{i['price']}{code_break}{i['where']}{code_break}{i['has_image']}{code_break}{i['geotag']}{code_break}{i['bedrooms']}{code_break}{i['area']}" for i in large_region.get_results(sort_by='newest')])
+                                    print(state, sub_reg, cat)
+                            housing_result.write_to_file(header_list, sub_reg, state)
+                            focus_list.append(reg)
         for reg, reg_name in eval(f'sr.{state}').items():
             if reg in sk.selected_reg:
                 if reg in focus_list:
@@ -79,5 +91,8 @@ def exec_search():
                         housing_result.write_to_file(header_list, reg_name, state)
                     except ValueError:
                         pass
+
     t1 = time.time()
     print(f"Run time: {'%.2f' % (t1 - t0)} sec")
+exec_search()
+    
