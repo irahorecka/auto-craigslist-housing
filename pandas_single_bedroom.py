@@ -53,14 +53,7 @@ class DataPrep:
             return append_list
         self.dtfm['Title Key'] = self.dtfm['Title'] + ' _ ' + self.dtfm['Location']
         self.dtfm['Num Time'] = pd.Series(cut_time())
-        return self.dtfm
-
-
-    def drop_and_sort(self):
-        #set time posted as numeric - bonus see if you can make it a one-liner
         self.dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = True, kind = 'quicksort')
-        #self.dtfm.sort_values(by = 'Num Time', ascending = False, inplace = True, kind = 'quicksort')
-        self.dtfm = self.dtfm.drop(['Title Key', 'Num Time'], axis = 1)
         return self.dtfm
 
 def compile_dtfm():
@@ -70,16 +63,23 @@ def compile_dtfm():
             concat_dtfm = pd.read_csv(filename, sep = ',')
             #make key for title + location and remove duplicates
             concat_dtfm['Title Key'] = concat_dtfm['Title'] + ' _ ' + concat_dtfm['Location']
-            #change price to float64
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
             dtfm = dtfm.append(concat_dtfm, ignore_index=True)
-            dtfm = dtfm.drop_duplicates(subset = ['Title Key'])
+            #remove generated CL filenames to save space
             os.remove(filename)
         else:
             pass
+    dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
     dtfm = dtfm.drop(['Bedrooms', 'Post ID', 'Repost of (Post ID)', 'Post has Image', 'Post has Geotag', 'Title Key'], axis = 1)
     return dtfm
 #print(dtfm['Price'].describe())
+
+def drop_and_sort(dtfm1, dtfm2):
+    dtfm = dtfm1.append(dtfm2, ignore_index = True)
+    dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
+    dtfm = dtfm.drop(['Title Key', 'Num Time'], axis = 1)
+    return dtfm
+
 
 def find_rooms(dtfm):
     cat_val = list()
@@ -103,22 +103,14 @@ def find_rooms(dtfm):
             
     os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv/Significant Deals')
     old_file = pd.read_csv('significant posts.csv')
-
     old_file = DataPrep(old_file).title_key()
     for_export = DataPrep(for_export).title_key()
 
-    for_export = for_export.append(old_file, ignore_index=True) 
-    #make this into a dictionaries of url, and see which urls don't match in combination df
-    for_export = for_export.drop_duplicates(subset = ['Title Key'])
-
-    old_file = DataPrep(old_file).drop_and_sort()
-    for_export = DataPrep(for_export).drop_and_sort()
-    new_find = for_export.append(old_file, ignore_index = True)
-    new_find = new_find.drop_duplicates(subset = ['Title', 'Location'], keep = False)
+    concat_file = drop_and_sort(for_export, old_file)
 
     for_export.to_csv('significant posts.csv', index = False)
-    new_find.to_csv('new_post.csv', index = False)
-    return new_find
+    concat_file.to_csv('new_post.csv', index = False)
+    return concat_file
 
 def execute_search():
     search_criteria = sbs.ExecSearch(sk.state_keys, sk.selected_reg, sk.district_list, sk.selected_cat)
