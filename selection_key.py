@@ -1,8 +1,8 @@
 #2019-08-25: selection keys and filters for craiglist searching
 
-state_keys = ['new_york']
-selected_reg = ['newyork']
+state_keys = ['california']
+selected_reg = ['sfbay']
 selected_cat = ['sub', 'roo']
-district_list = ['manhattan','brooklyn']
+district_list = ['oakland','berkeley','richmond','el cerrito']
 
 name = 'ira'
