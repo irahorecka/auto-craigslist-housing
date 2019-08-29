@@ -100,7 +100,7 @@ if len(data_to_email) == 1:
         title = row['Title']
 
         text_body += f'I found a nice place in {location.title()} for you for ${price} a month.{url}'
-        html_body += f'I found a nice place in {location.title()} for you for ${price} a month.<br>Posting: <a href="{url}">{title.title()}</a><br>'
+        html_body += f'I found a nice place in <u>{location.title()}</u> for you for <u>${price}</u> a month.<br>Posting: <a href="{url}">{title.title()}</a><br>'
 
     text, html = data_send.single_entry()
     text = text.format(body = text_body, name = name.title())

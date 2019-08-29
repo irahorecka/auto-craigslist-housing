@@ -93,7 +93,7 @@ def find_rooms(dtfm):
         for j in reg_list:    
             temp_dist_dtfm = StatAnalysis(temp_dtfm.loc[temp_dtfm['CL District'] == j])
             temp_sans_outlier = temp_dist_dtfm.omit_outlier()
-            significant_posts = temp_dist_dtfm.stat_significant(temp_sans_outlier, 1)
+            significant_posts = temp_dist_dtfm.stat_significant(temp_sans_outlier, 0.8)
             select_district = temp_dist_dtfm.select_districts(significant_posts, sk.district_list)
             for_export = for_export.append(select_district, ignore_index=True)
         #outlier_data = temp_sans_outlier['Price']
@@ -108,6 +108,7 @@ def find_rooms(dtfm):
     for_export = DataPrep(for_export).title_key()
 
     for_export = for_export.append(old_file, ignore_index=True) 
+    #make this into a dictionaries of url, and see which urls don't match in combination df
     for_export = for_export.drop_duplicates(subset = ['Title Key'])
 
     old_file = DataPrep(old_file).drop_and_sort()
@@ -120,7 +121,8 @@ def find_rooms(dtfm):
     return new_find
 
 def execute_search():
-    sbs.exec_search()
+    search_criteria = sbs.ExecSearch(sk.state_keys, sk.selected_reg, sk.district_list, sk.selected_cat)
+    search_criteria.cl_search()
 
 #data = compile_dtfm()
 #find_rooms(data)
