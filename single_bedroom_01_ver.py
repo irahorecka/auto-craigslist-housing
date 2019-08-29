@@ -18,6 +18,7 @@ import logging
 import cl_search_dict as clsd
 import state_reg as sr
 import selection_key as sk
+import copy
 #os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Craigslist_project/Data/From Python/Single rooms')
 date_time = str(datetime.datetime.now())[:-10]
 date = datetime.date.today()
@@ -77,14 +78,14 @@ class ExecSearch:
                         if reg == 'newyork' or reg == 'boston':
                             housing_dict = clsd.apa_dict
                         for sub_reg in reg_name:
-                            header_list = self.header
+                            header_list = copy.deepcopy(self.header)
                             for cat, cat_name in housing_dict.items():
                                 if cat in self.filter:
                                     housing_result = CL_Housing_Select(reg, cat, clsd.room_filters)
                                     large_region = housing_result.large_region(sub_reg)
                                     header_list.extend([f"{state.title()}{self.code_break}{reg}{self.code_break}{sub_reg}{self.code_break}{cat_name}{self.code_break}{i['id']}{self.code_break}{i['repost_of']}{self.code_break}{i['name']}{self.code_break}{i['url']}{self.code_break}{i['datetime'][0:10]}{self.code_break}{i['datetime'][11:]}{self.code_break}{i['price']}{self.code_break}{i['where']}{self.code_break}{i['has_image']}{self.code_break}{i['geotag']}{self.code_break}{i['bedrooms']}{self.code_break}{i['area']}" for i in large_region.get_results(sort_by='newest')])
                                     print(state, sub_reg, cat)
-                            housing_result.write_to_file(self.header, sub_reg, state)
+                            housing_result.write_to_file(header_list, sub_reg, state)
                             focus_list.append(reg)
             for reg, reg_name in eval(f'sr.{state}').items():
                 if reg in self.regions:
@@ -92,14 +93,14 @@ class ExecSearch:
                         continue
                     else:
                         try:
-                            header_list = self.header
+                            header_list = copy.deepcopy(self.header)
                             for cat, cat_name in housing_dict.items():
                                 if cat in self.filter:
                                     housing_result = CL_Housing_Select(reg, cat, clsd.room_filters)
                                     small_region = housing_result.small_region()
                                     header_list.extend([f"{state.title()}{self.code_break}{reg}{self.code_break}{reg_name}{self.code_break}{cat_name}{self.code_break}{i['id']}{self.code_break}{i['repost_of']}{self.code_break}{i['name']}{self.code_break}{i['url']}{self.code_break}{i['datetime'][0:10]}{self.code_break}{i['datetime'][11:]}{self.code_break}{i['price']}{self.code_break}{i['where']}{self.code_break}{i['has_image']}{self.code_break}{i['geotag']}{self.code_break}{i['bedrooms']}{self.code_break}{i['area']}" for i in small_region.get_results(sort_by='newest')])
                                     print(state, reg, cat)
-                            housing_result.write_to_file(self.header, reg_name, state)
+                            housing_result.write_to_file(header_list, reg_name, state)
                         except ValueError:
                             print('focus_dict encountered')
                             pass
