@@ -10,6 +10,7 @@ import single_bedroom_01_ver as sbs
 import cl_search_dict as clsd
 import selection_key as sk
 import matplotlib.pyplot as plt
+import copy
 os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv/CL Files')
 
 class StatAnalysis:
@@ -51,10 +52,11 @@ class DataPrep:
                 elif len(row['Time Posted']) == 4:
                     append_list.append(int(row['Time Posted'][:1]))
             return append_list
-        self.dtfm['Title Key'] = self.dtfm['Title'] + ' _ ' + self.dtfm['Location']
-        self.dtfm['Num Time'] = pd.Series(cut_time())
-        self.dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = True, kind = 'quicksort')
-        return self.dtfm
+        dtfm = copy.deepcopy(self.dtfm)
+        dtfm['Title Key'] = dtfm['Title'] + ' _ ' + dtfm['Location']
+        dtfm['Num Time'] = pd.Series(cut_time())
+        dtfm = dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = False, kind = 'quicksort')
+        return dtfm
 
 def compile_dtfm():
     dtfm = pd.DataFrame()
@@ -103,12 +105,12 @@ def find_rooms(dtfm):
             
     os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv/Significant Deals')
     old_file = pd.read_csv('significant posts.csv')
-    old_file = DataPrep(old_file).title_key()
-    for_export = DataPrep(for_export).title_key()
-
-    concat_file = drop_and_sort(for_export, old_file)
-
-    for_export.to_csv('significant posts.csv', index = False)
+    parse_old_file = DataPrep(old_file).title_key()
+    parse_for_export = DataPrep(for_export).title_key()
+    concat_file = drop_and_sort(parse_for_export, parse_old_file)
+ 
+    ref_file = concat_file.append(old_file, ignore_index = True)
+    ref_file.to_csv('significant posts.csv', index = False)
     concat_file.to_csv('new_post.csv', index = False)
     return concat_file
 
