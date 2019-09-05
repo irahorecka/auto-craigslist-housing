@@ -38,6 +38,10 @@ class StatAnalysis:
                 if i in row['Location'].lower():
                     return_dtfm = return_dtfm.append(row)
         return return_dtfm
+        #try a new approach in looking for districts in dataframe
+        '''dtfm.loc[:,'Location'] = dtfm['Location'].str.lower()
+        for i in dist_list:
+            return_dtfm = return_dtfm.append(dtfm.loc[dtfm['Location'].str.contains(i.lower())])'''
 
 class DataPrep:
     def __init__(self, dtfm):
@@ -66,7 +70,7 @@ def compile_dtfm():
             #make key for title + location and remove duplicates
             concat_dtfm['Title Key'] = concat_dtfm['Title'] + ' _ ' + concat_dtfm['Location']
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
-            dtfm = dtfm.append(concat_dtfm, ignore_index=True)
+            dtfm = dtfm.append(concat_dtfm, ignore_index=True, sort = False)
             #remove generated CL filenames to save space
             os.remove(filename)
         else:
@@ -77,7 +81,7 @@ def compile_dtfm():
 #print(dtfm['Price'].describe())
 
 def drop_and_sort(dtfm1, dtfm2):
-    dtfm = dtfm1.append(dtfm2, ignore_index = True)
+    dtfm = dtfm1.append(dtfm2, ignore_index = True, sort = False)
     dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
     dtfm = dtfm.drop(['Title Key', 'Num Time'], axis = 1)
     return dtfm
@@ -97,7 +101,7 @@ def find_rooms(dtfm):
             temp_sans_outlier = temp_dist_dtfm.omit_outlier()
             significant_posts = temp_dist_dtfm.stat_significant(temp_sans_outlier, 0.8)
             select_district = temp_dist_dtfm.select_districts(significant_posts, sk.district_list)
-            for_export = for_export.append(select_district, ignore_index=True)
+            for_export = for_export.append(select_district, ignore_index=True, sort = False)
         #outlier_data = temp_sans_outlier['Price']
         '''plt.hist(outlier_data)
         plt.title(i)
@@ -109,7 +113,7 @@ def find_rooms(dtfm):
     parse_for_export = DataPrep(for_export).title_key()
     concat_file = drop_and_sort(parse_for_export, parse_old_file)
  
-    ref_file = concat_file.append(old_file, ignore_index = True)
+    ref_file = concat_file.append(old_file, ignore_index = True, sort = False)
     ref_file.to_csv('significant posts.csv', index = False)
     concat_file.to_csv('new_post.csv', index = False)
     return concat_file
