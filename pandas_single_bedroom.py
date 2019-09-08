@@ -7,8 +7,8 @@ import os
 import csv
 import datetime
 import single_bedroom_01_ver as sbs
-import cl_search_dict as clsd
-import selection_key as sk
+from craigslist_information import Filters as clsd #make better abbreviation later
+from user_information import SelectionKeys as sk
 import matplotlib.pyplot as plt
 import copy
 os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv/CL Files')
@@ -62,6 +62,7 @@ class DataPrep:
         dtfm = dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = False, kind = 'quicksort')
         return dtfm
 
+#should the functions below be made into classes?
 def compile_dtfm():
     dtfm = pd.DataFrame()
     for filename in os.listdir():

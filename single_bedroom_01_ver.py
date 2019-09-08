@@ -15,13 +15,11 @@ from craigslist import CraigslistHousing
 import datetime
 import time
 import logging
-import cl_search_dict as clsd
-import state_reg as sr
-import selection_key as sk
+from craigslist_information import Filters as clsd #make better abbreviation later
+from craigslist_information import States as sr #make better abbreviation later
+from user_information import SelectionKeys as sk
 import copy
 #os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Craigslist_project/Data/From Python/Single rooms')
-date_time = str(datetime.datetime.now())[:-10]
-date = datetime.date.today()
 
 class CL_Housing_Select:
     def __init__(self, inst_site, inst_category, inst_filters):
@@ -38,6 +36,7 @@ class CL_Housing_Select:
         return CraigslistHousing(site=self.inst_site,category=self.inst_category,filters=self.inst_filters,area=inst_area)
 
     def write_to_file(self, write_list, inst_site_name, inst_state_name):
+        date = datetime.date.today()
         title = f'{date} rooms and sublets in {inst_site_name}_{inst_state_name.title()}.csv'
         with open(title, 'w', newline = '') as rm_csv:
             writer = csv.writer(rm_csv, delimiter = ',')
@@ -49,6 +48,7 @@ def my_logger(func):
     logging.basicConfig(filename=f'{func.__name__}.log', level = logging.INFO)
 
     def wrapper(*args, **kwargs):
+        date_time = str(datetime.datetime.now())[:-10]
         logging.info(
             f'Ran with filters: {clsd.room_filters} at {date_time}')
         return func(*args, **kwargs)
@@ -69,12 +69,11 @@ class ExecSearch:
     def cl_search(self):
         t0 = time.time()
         housing_dict = clsd.cat_dict
-        search_state = sr.States
 
         for state in self.states:
             focus_list = [] 
-            if 'focus_dist' in eval(f'search_state.{state}'):
-                for reg, reg_name in eval(f'search_state.{state}')["focus_dist"].items():
+            if 'focus_dist' in eval(f'sr.{state}'):
+                for reg, reg_name in eval(f'sr.{state}')["focus_dist"].items():
                     if reg in self.regions:
                         if reg == 'newyork' or reg == 'boston':
                             housing_dict = clsd.apa_dict
@@ -88,7 +87,7 @@ class ExecSearch:
                                     print(state, sub_reg, cat)
                             housing_result.write_to_file(header_list, sub_reg, state)
                             focus_list.append(reg)
-            for reg, reg_name in eval(f'search_state.{state}').items():
+            for reg, reg_name in eval(f'sr.{state}').items():
                 if reg in self.regions:
                     if reg in focus_list:
                         continue
