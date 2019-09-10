@@ -10,7 +10,7 @@ class ContentFormat:
 
     def single(self, location, price, url, title):
         self.text += f'I found a nice place in {location.title()} for you for ${price} a month.{url}'
-        self.html += f'I found a nice place in <u>{location.title()}</u> for you for <u>${price}</u> a month.<br>Posting: <a href="{url}">{title.title()}</a><br>'
+        self.html += f'I found a nice place in {location.title()} for you for ${price} a month.<br>Posting: <a href="{url}">{title.title()}</a><br>'
 
     def multiple(self, location, price, url, title, numbering):
         self.text += f'{numbering}) In {location.title()} for ${price} a month. {url}\n'
@@ -30,14 +30,14 @@ def execute():
     name = sk.name
     numbering = 1
     if len(data_to_email) == 0:
-        print('No email sent.')
-        pass
+        return 'No email sent.'
     elif len(data_to_email) == 1:
-        location = data_to_email['Location']
-        price = '%.0f' % data_to_email['Price']
-        url = data_to_email['URL']
-        title = data_to_email['Title']
+        location = data_to_email['Location'][0]
+        price = '%.0f' % data_to_email['Price'][0]
+        url = data_to_email['URL'][0]
+        title = data_to_email['Title'][0]
         content.single(location, price, url, title)
+        text_body, html_body = content.return_content()
         text, html = data_send.single_entry()
     else:
         for index,row in data_to_email.iterrows():
@@ -53,6 +53,6 @@ def execute():
     html = html.format(body = html_body, name = name.title())
     send_email = sg.SendEmail(text, html)
     send_email.process_shipment()
-    print('No email sent.')
+    return 'Email sent.'
 
-execute()
+print(execute())
