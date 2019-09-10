@@ -9,11 +9,11 @@ import datetime
 import single_bedroom_01_ver as sbs
 from craigslist_information import Filters as clsd #make better abbreviation later
 from user_information import SelectionKeys as sk
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import copy
 
 base_dir = os.getcwd()
-os.chdir(f'{base_dir}/single_room_csv/CL Files')
+os.chdir('{}/single_room_csv/CL Files'.format(base_dir))
 
 class StatAnalysis:
     def __init__(self, dtfm):
@@ -75,7 +75,7 @@ def compile_dtfm():
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
             dtfm = dtfm.append(concat_dtfm, ignore_index=True, sort = False)
             #remove generated CL filenames to save space
-            os.remove(filename)
+            #os.remove(filename)
         else:
             pass
     dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
@@ -110,7 +110,7 @@ def find_rooms(dtfm):
         plt.title(i)
         plt.show()'''
             
-    os.chdir(f'{base_dir}/single_room_csv/Significant Deals')
+    os.chdir('{}/single_room_csv/Significant Deals'.format(base_dir))
     old_file = pd.read_csv('significant posts.csv')
     parse_old_file = DataPrep(old_file).title_key()
     parse_for_export = DataPrep(for_export).title_key()
