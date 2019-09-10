@@ -14,7 +14,7 @@ class ContentFormat:
 
     def multiple(self, location, price, url, title, numbering):
         self.text += '{}) In {} for ${} a month. {}\n'.format(numbering,location.title(),price,url)
-        self.html += '{}) In {} for ${} a month.<br>Posting: <a href="{}">{}</a><br>'.format(numbering,location.title(),price,url,title.title)
+        self.html += '{}) In {} for ${} a month.<br>Posting: <a href="{}">{}</a><br>'.format(numbering,location.title(),price,url,title.title())
 
     def return_content(self):
         return self.text, self.html
