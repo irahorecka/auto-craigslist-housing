@@ -4,11 +4,7 @@
 #ADDITION TO BE MADE: The file crashes when reading. I blieve it has to do with an incorrect or empty district_list.
 # If district_list == 'all', do not filter district
 # If district_list is incorrect, write 'could not find {district}'
-'''
-  File "/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/pandas_single_bedroom.py", line 108, in find_rooms
-    for_export = DataPrep(for_export).title_key()
-  File "/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/pandas_single_bedroom.py", line 54, in title_key
-    self.dtfm['Title Key'] = self.dtfm['Title'] + ' _ ' + self.dtfm['Location']'''
+
 import os
 import csv
 from craigslist import CraigslistHousing
