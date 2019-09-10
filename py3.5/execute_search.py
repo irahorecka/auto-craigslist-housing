@@ -5,7 +5,7 @@ import send_gmail as sg
 #simplify code in execute() 
 class ContentFormat:
     def __init__(self, text, html):
-        self.text = text.iloc
+        self.text = text
         self.html = html
 
     def single(self, location, price, url, title):
