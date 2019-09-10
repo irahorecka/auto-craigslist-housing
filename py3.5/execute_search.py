@@ -10,7 +10,7 @@ class ContentFormat:
 
     def single(self, location, price, url, title):
         self.text += 'I found a nice place in {} for you for ${} a month.{}'.format(location.title(),price,url)
-        self.html += 'I found a nice place in {} for you for ${} a month.<br>Posting: <a href="{}">{title.title()}</a><br>'.format(location.title(),price,url)
+        self.html += 'I found a nice place in {} for you for ${} a month.<br>Posting: <a href="{}">{}</a><br>'.format(location.title(),price,url,title.title())
 
     def multiple(self, location, price, url, title, numbering):
         self.text += '{}) In {} for ${} a month. {}\n'.format(numbering,location.title(),price,url)
