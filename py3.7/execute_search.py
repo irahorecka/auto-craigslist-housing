@@ -32,10 +32,10 @@ def execute():
     if len(data_to_email) == 0:
         return 'No email sent.'
     elif len(data_to_email) == 1:
-        location = data_to_email['Location'][0]
-        price = '%.0f' % data_to_email['Price'][0]
-        url = data_to_email['URL'][0]
-        title = data_to_email['Title'][0]
+        location = data_to_email['Location'].iloc[0]
+        price = '%.0f' % data_to_email['Price'].iloc[0]
+        url = data_to_email['URL'].iloc[0]
+        title = data_to_email['Title'].iloc[0]
         content.single(location, price, url, title)
         text_body, html_body = content.return_content()
         text, html = data_send.single_entry()

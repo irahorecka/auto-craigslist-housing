@@ -75,7 +75,7 @@ def compile_dtfm():
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
             dtfm = dtfm.append(concat_dtfm, ignore_index=True, sort = False)
             #remove generated CL filenames to save space
-            #os.remove(filename)
+            os.remove(filename)
         else:
             pass
     dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
