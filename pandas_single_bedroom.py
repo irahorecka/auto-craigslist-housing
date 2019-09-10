@@ -11,7 +11,7 @@ from craigslist_information import Filters as clsd #make better abbreviation lat
 from user_information import SelectionKeys as sk
 import matplotlib.pyplot as plt
 import copy
-os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv/CL Files')
+os.chdir(f'{os.getcwd()}/single_room_csv/CL Files')
 
 class StatAnalysis:
     def __init__(self, dtfm):

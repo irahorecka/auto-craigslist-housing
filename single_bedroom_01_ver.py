@@ -15,7 +15,6 @@ from craigslist_information import Filters as clsd #make better abbreviation lat
 from craigslist_information import States as sr #make better abbreviation later
 from user_information import SelectionKeys as sk
 import copy
-#os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Craigslist_project/Data/From Python/Single rooms')
 
 class CL_Housing_Select:
     def __init__(self, inst_site, inst_category, inst_filters):
