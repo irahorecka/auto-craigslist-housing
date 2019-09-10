@@ -11,7 +11,9 @@ from craigslist_information import Filters as clsd #make better abbreviation lat
 from user_information import SelectionKeys as sk
 import matplotlib.pyplot as plt
 import copy
-os.chdir(f'{os.getcwd()}/single_room_csv/CL Files')
+
+base_dir = os.getcwd()
+os.chdir(f'{base_dir}/single_room_csv/CL Files')
 
 class StatAnalysis:
     def __init__(self, dtfm):
@@ -108,7 +110,7 @@ def find_rooms(dtfm):
         plt.title(i)
         plt.show()'''
             
-    os.chdir('/Users/irahorecka/Desktop/Harddrive_Desktop/Python/Auto_CL_Housing/single_room_csv/Significant Deals')
+    os.chdir(f'{base_dir}/single_room_csv/Significant Deals')
     old_file = pd.read_csv('significant posts.csv')
     parse_old_file = DataPrep(old_file).title_key()
     parse_for_export = DataPrep(for_export).title_key()
