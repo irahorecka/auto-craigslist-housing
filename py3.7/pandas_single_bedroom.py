@@ -11,6 +11,7 @@ from craigslist_information import Filters as clsd #make better abbreviation lat
 from user_information import SelectionKeys as sk
 import matplotlib.pyplot as plt
 import copy
+pd.options.mode.chained_assignment = None
 
 base_dir = os.getcwd()
 os.chdir(f'{base_dir}/single_room_csv/CL Files')
@@ -34,11 +35,12 @@ class StatAnalysis:
 
     def select_districts(self, dtfm, dist_list):
         return_dtfm = pd.DataFrame()
-        dist_list = [i.lower() for i in dist_list]
-        for i in dist_list:
-            for index,row in dtfm.iterrows():
-                if i in row['Location'].lower():
-                    return_dtfm = return_dtfm.append(row)
+        dtfm.loc[:,'Location'] = dtfm['Location'].str.lower()
+        if len(dist_list) == 0:
+            return_dtfm = dtfm
+        else:
+            for i in dist_list:
+                return_dtfm = return_dtfm.append(dtfm.loc[dtfm['Location'].str.contains(i.lower())])
         return return_dtfm
         #try a new approach in looking for districts in dataframe
         '''dtfm.loc[:,'Location'] = dtfm['Location'].str.lower()
