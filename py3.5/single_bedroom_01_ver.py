@@ -5,7 +5,6 @@
 # If district_list == 'all', do not filter district
 # If district_list is incorrect, write 'could not find {district}'
 
-import os
 import csv
 from craigslist import CraigslistHousing
 import datetime
