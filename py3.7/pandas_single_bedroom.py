@@ -1,6 +1,5 @@
 #Look for all sublets and rooms in sfbay craigslist, sort out statistically significant pricings, i.e. mean - 1sd after outlier removal
-#Afterwords, only sort out districts of interest, e.g. berkeley, oakland, fremont.
-#NEXT: Sort the dataframe to return only columns of interest - complete
+#Afterwards, only sort out districts of interest, e.g. berkeley, oakland, fremont.
 
 import pandas as pd
 import os
@@ -9,8 +8,8 @@ import datetime
 import single_bedroom_01_ver as sbs
 from craigslist_information import Filters as clsd #make better abbreviation later
 from user_information import SelectionKeys as sk
-import matplotlib.pyplot as plt
 import copy
+pd.options.mode.chained_assignment = None
 
 base_dir = os.getcwd()
 os.chdir(f'{base_dir}/single_room_csv/CL Files')
@@ -34,17 +33,14 @@ class StatAnalysis:
 
     def select_districts(self, dtfm, dist_list):
         return_dtfm = pd.DataFrame()
-        dist_list = [i.lower() for i in dist_list]
-        for i in dist_list:
-            for index,row in dtfm.iterrows():
-                if i in row['Location'].lower():
-                    return_dtfm = return_dtfm.append(row)
+        dtfm.loc[:,'Location'] = dtfm['Location'].str.lower()
+        if len(dist_list) == 0:
+            return_dtfm = dtfm
+        else:
+            for i in dist_list:
+                return_dtfm = return_dtfm.append(dtfm.loc[dtfm['Location'].str.contains(i.lower())])
         return return_dtfm
-        #try a new approach in looking for districts in dataframe
-        '''dtfm.loc[:,'Location'] = dtfm['Location'].str.lower()
-        for i in dist_list:
-            return_dtfm = return_dtfm.append(dtfm.loc[dtfm['Location'].str.contains(i.lower())])'''
-
+        
 class DataPrep:
     def __init__(self, dtfm):
         self.dtfm = dtfm
@@ -81,7 +77,6 @@ def compile_dtfm():
     dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
     dtfm = dtfm.drop(['Bedrooms', 'Post ID', 'Repost of (Post ID)', 'Post has Image', 'Post has Geotag', 'Title Key'], axis = 1)
     return dtfm
-#print(dtfm['Price'].describe())
 
 def drop_and_sort(dtfm1, dtfm2):
     dtfm = dtfm1.append(dtfm2, ignore_index = True, sort = False)
@@ -105,10 +100,6 @@ def find_rooms(dtfm):
             significant_posts = temp_dist_dtfm.stat_significant(temp_sans_outlier, 0.8)
             select_district = temp_dist_dtfm.select_districts(significant_posts, sk.district_list)
             for_export = for_export.append(select_district, ignore_index=True, sort = False)
-        #outlier_data = temp_sans_outlier['Price']
-        '''plt.hist(outlier_data)
-        plt.title(i)
-        plt.show()'''
             
     os.chdir(f'{base_dir}/single_room_csv/Significant Deals')
     old_file = pd.read_csv('significant posts.csv')
@@ -124,6 +115,3 @@ def find_rooms(dtfm):
 def execute_search():
     search_criteria = sbs.ExecSearch(sk.state_keys, sk.selected_reg, sk.district_list, sk.selected_cat)
     search_criteria.cl_search()
-
-#data = compile_dtfm()
-#find_rooms(data)

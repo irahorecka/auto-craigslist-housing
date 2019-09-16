@@ -1,11 +1,3 @@
-#2019-08-22 A refined single bedroom search on craigslist for actual housing help
-#Goal: move away from creating .csv files, rather make a pandas dataframe to pipe to data analysis file
-
-#ADDITION TO BE MADE: The file crashes when reading. I blieve it has to do with an incorrect or empty district_list.
-# If district_list == 'all', do not filter district
-# If district_list is incorrect, write 'could not find {district}'
-
-import os
 import csv
 from craigslist import CraigslistHousing
 import datetime
@@ -24,7 +16,6 @@ class CL_Housing_Select:
         self.code_break = ';n@nih;'
 
     def small_region(self):
-        #make this into another method and add small_region addition below as its native method function
         return CraigslistHousing(site=self.inst_site,category=self.inst_category,filters=self.inst_filters)
 
     def large_region(self, inst_area):
