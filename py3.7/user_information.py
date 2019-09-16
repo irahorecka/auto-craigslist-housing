@@ -14,6 +14,6 @@ class UserInformation:
 class SelectionKeys:
     state_keys = ['california']
     selected_reg = ['sfbay']
-    selected_cat = ['sub', 'roo']
+    selected_cat = ['apa', 'roo']
     district_list = ['oakland','berkeley','richmond','el cerrito','san leandro','alameda','albany','hercules']
     name = 'ira'

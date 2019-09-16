@@ -1,4 +1,5 @@
 import pandas_single_bedroom as psb
+import cl_scraper as cs
 from user_information import SelectionKeys as sk
 import send_gmail as sg
 import os
@@ -23,7 +24,8 @@ class ContentFormat:
 #execute commands
 def execute():
     os.chdir(base_dir)
-    psb.execute_search()
+    search_criteria = cs.ExecSearch(sk.state_keys, sk.selected_reg, sk.district_list, sk.selected_cat)
+    search_criteria.cl_search()
     data = psb.compile_dtfm()
     data_to_email = psb.find_rooms(data)
     os.chdir(base_dir)

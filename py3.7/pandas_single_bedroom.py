@@ -5,14 +5,13 @@ import pandas as pd
 import os
 import csv
 import datetime
-import single_bedroom_01_ver as sbs
 from craigslist_information import Filters as clsd #make better abbreviation later
 from user_information import SelectionKeys as sk
 import copy
 pd.options.mode.chained_assignment = None
 
 base_dir = os.getcwd()
-os.chdir(f'{base_dir}/single_room_csv/CL Files')
+os.chdir(f'{base_dir}/housing_csv/CL Files')
 
 class StatAnalysis:
     def __init__(self, dtfm):
@@ -101,7 +100,7 @@ def find_rooms(dtfm):
             select_district = temp_dist_dtfm.select_districts(significant_posts, sk.district_list)
             for_export = for_export.append(select_district, ignore_index=True, sort = False)
             
-    os.chdir(f'{base_dir}/single_room_csv/Significant Deals')
+    os.chdir(f'{base_dir}/housing_csv/Significant Deals')
     old_file = pd.read_csv('significant posts.csv')
     parse_old_file = DataPrep(old_file).title_key()
     parse_for_export = DataPrep(for_export).title_key()
@@ -111,7 +110,3 @@ def find_rooms(dtfm):
     ref_file.to_csv('significant posts.csv', index = False)
     concat_file.to_csv('new_post.csv', index = False)
     return concat_file
-
-def execute_search():
-    search_criteria = sbs.ExecSearch(sk.state_keys, sk.selected_reg, sk.district_list, sk.selected_cat)
-    search_criteria.cl_search()

@@ -2,16 +2,20 @@
 
 class Filters:
     #A file to store room filters, rooming categories, and state keys in dictionaries
-    room_filters = {'private_room' : True, #bool
+
+    #extra_filters is a general filter sheet for specifics - not all housing categories adhere to every part of this filter
+    #e.g. you will not look for max_bedrooms for a room/share craigslist posts
+    #create selectors in the future to limit which filters are mutable by the user per category they choose
+    extra_filters = {'private_room' : None, #bool
         'private_bath' : None, #bool
         'cats_ok' : None, #bool
         'dogs_ok' : None, #bool
-        'min_price' : 500,
-        'max_price' : 1200,
+        'min_price' : None,
+        'max_price' : None,
         'min_ft2' : None,
         'max_ft2' : None,
-        'min_bedrooms' : None,
-        'max_bedrooms' : None,
+        'min_bedrooms' : 2,
+        'max_bedrooms' : 2,
         'min_bathrooms' : None,
         'max_bathrooms' : None,
         'no_smoking' : None, #bool
@@ -20,7 +24,7 @@ class Filters:
         'has_image' : True #bool
     }
 
-    cat_dict = {'apa':'apts/housing for rent',
+    cat_dict = {'apa':'apts & housing for rent',
         'swp':'housing swap',
         'off':'office & commercial',
         'prk':'parking & storage',
@@ -31,10 +35,10 @@ class Filters:
         'vac':'vacation rentals',
         'hou':'wanted: apts',
         'rew':'wanted: real estate',
-        'sha':'wanted: room/share',
-        'sbw':'wanted: sublet/temp'}
+        'sha':'wanted: room & share',
+        'sbw':'wanted: sublet & temp'}
 
-    apa_dict = {'aap':'apts/housing for rent',
+    apa_dict = {'aap':'apts & housing for rent',
         'swp':'housing swap',
         'off':'office & commercial',
         'prk':'parking & storage',
@@ -45,8 +49,8 @@ class Filters:
         'vac':'vacation rentals',
         'hou':'wanted: apts',
         'rew':'wanted: real estate',
-        'sha':'wanted: room/share',
-        'sbw':'wanted: sublet/temp'}
+        'sha':'wanted: room & share',
+        'sbw':'wanted: sublet & temp'}
 
 
 class States:
