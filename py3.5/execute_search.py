@@ -1,8 +1,9 @@
 import pandas_single_bedroom as psb
 from user_information import SelectionKeys as sk
 import send_gmail as sg
+import os
+base_dir = os.getcwd()
 
-#simplify code in execute() 
 class ContentFormat:
     def __init__(self, text, html):
         self.text = text
@@ -21,9 +22,11 @@ class ContentFormat:
 
 #execute commands
 def execute():
+    os.chdir(base_dir)
     psb.execute_search()
     data = psb.compile_dtfm()
     data_to_email = psb.find_rooms(data)
+    os.chdir(base_dir)
 
     data_send = sg.PrepEmail(data_to_email)
     content = ContentFormat("","")

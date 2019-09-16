@@ -4,7 +4,6 @@ import send_gmail as sg
 import os
 base_dir = os.getcwd()
 
-#simplify code in execute() 
 class ContentFormat:
     def __init__(self, text, html):
         self.text = text
