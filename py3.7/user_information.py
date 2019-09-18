@@ -13,9 +13,12 @@ class UserInformation:
 
 class SelectionKeys:
     #if we were solely looking at zip code... 
+    #note! with zipcode, selected_reg and state_keys will be empty
     state_keys = []#['california']
     selected_reg = []#['sfbay']
     selected_cat = ['apa']
     district_list = []#['oakland','berkeley','richmond','el cerrito','san leandro','alameda','albany','hercules']
     dist_filters = [94085, 5] #[zipcode, miles from zip]
-    name = 'ira'
+    value_key = 1 #0 for statistically cheaper, 1 for statistically expensive 
+    sd_val = 0.8
+    name = 'alex'
