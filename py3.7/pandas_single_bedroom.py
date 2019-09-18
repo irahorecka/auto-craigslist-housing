@@ -23,22 +23,35 @@ class StatAnalysis:
         IQR = Q3 - Q1
         self.dtfm = self.dtfm.loc[self.dtfm['Price'] <= Q3 + 1.5*IQR]
         self.dtfm = self.dtfm.loc[self.dtfm['Price'] >= Q1 - 1.5*IQR]
-        return self.dtfm
 
-    def stat_significant(self, dtfm, sd_val):
-        mean = dtfm['Price'].mean()
-        sd = dtfm['Price'].std()
-        return dtfm.loc[dtfm['Price'] <= (mean - sd_val*sd)]
+    def stat_significant(self, sd_val, val_type):
+        mean = self.dtfm['Price'].mean()
+        sd = self.dtfm['Price'].std()
+        if val_type == 0:
+            self.dtfm = self.dtfm.loc[self.dtfm['Price'] <= (mean - sd_val*sd)]
+            print(mean - sd_val*sd)
+        else:
+            self.dtfm = self.dtfm.loc[self.dtfm['Price'] >= (mean + sd_val*sd)]
+            print(mean + sd_val*sd)
 
-    def select_districts(self, dtfm, dist_list):
+    def select_districts(self, dist_list):
         return_dtfm = pd.DataFrame()
-        dtfm.loc[:,'Location'] = dtfm['Location'].str.lower()
+        self.dtfm.loc[:,'Location'] = self.dtfm['Location'].str.lower()
         if len(dist_list) == 0:
-            return_dtfm = dtfm
+            return_dtfm = self.dtfm
         else:
             for i in dist_list:
-                return_dtfm = return_dtfm.append(dtfm.loc[dtfm['Location'].str.contains(i.lower())])
-        return return_dtfm
+                return_dtfm = return_dtfm.append(self.dtfm.loc[self.dtfm['Location'].str.contains(i.lower())])
+        self.dtfm = return_dtfm
+
+    def curate_dtfm(self, housing_dist, sd, val_type):
+        self.omit_outlier()
+        self.stat_significant(sd, val_type)
+        self.select_districts(housing_dist)
+    
+    def return_dtfm(self):
+        return self.dtfm
+
         
 class DataPrep:
     def __init__(self, dtfm):
@@ -59,6 +72,7 @@ class DataPrep:
         dtfm = dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = False, kind = 'quicksort')
         return dtfm
 
+
 #should the functions below be made into classes?
 def compile_dtfm():
     dtfm = pd.DataFrame()
@@ -74,7 +88,7 @@ def compile_dtfm():
         else:
             pass
     dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
-    dtfm = dtfm.drop(['Bedrooms', 'Post ID', 'Repost of (Post ID)', 'Post has Image', 'Post has Geotag', 'Title Key'], axis = 1)
+    dtfm = dtfm.drop(['Post ID', 'Repost of (Post ID)', 'Post has Image', 'Post has Geotag', 'Title Key'], axis = 1)
     return dtfm
 
 def drop_and_sort(dtfm1, dtfm2):
@@ -83,22 +97,28 @@ def drop_and_sort(dtfm1, dtfm2):
     dtfm = dtfm.drop(['Title Key', 'Num Time'], axis = 1)
     return dtfm
 
-
-def find_rooms(dtfm):
-    cat_val = list()
-    for i in sk.selected_cat:
-        cat_val.append(clsd.cat_dict[i])
-
+def find_rooms(dtfm, sd, val_type):
+    cat_val = [clsd.cat_dict[i] for i in sk.selected_cat]
+    reg_list = dtfm['CL District'].unique()
     for_export = pd.DataFrame()
     for i in cat_val:
-        temp_dtfm = dtfm.loc[dtfm['Housing Category'] == i]
-        reg_list = dtfm['CL District'].unique()
-        for j in reg_list:    
-            temp_dist_dtfm = StatAnalysis(temp_dtfm.loc[temp_dtfm['CL District'] == j])
-            temp_sans_outlier = temp_dist_dtfm.omit_outlier()
-            significant_posts = temp_dist_dtfm.stat_significant(temp_sans_outlier, 0.8)
-            select_district = temp_dist_dtfm.select_districts(significant_posts, sk.district_list)
-            for_export = for_export.append(select_district, ignore_index=True, sort = False)
+        if i == 'apts & housing for rent' or i == 'vacation rentals': #find categories where bedrooms will be important
+            bed_list = dtfm['Bedrooms'].unique()
+        else:
+            bed_list = []
+        if len(bed_list) != 0:
+            for j in bed_list:
+                temp_dtfm = dtfm.loc[(dtfm['Housing Category'] == i) & (dtfm['Bedrooms'] == j)]
+                for k in reg_list:    
+                    temp_dtfm_curate = StatAnalysis(temp_dtfm.loc[temp_dtfm['CL District'] == k])
+                    temp_dtfm_curate.curate_dtfm(sk.district_list, sd, val_type)
+                    for_export = for_export.append(temp_dtfm_curate.return_dtfm(), ignore_index=True, sort = False)
+        else:
+            temp_dtfm = dtfm.loc[dtfm['Housing Category'] == i]
+            for k in reg_list:    
+                temp_dtfm_curate = StatAnalysis(temp_dtfm.loc[temp_dtfm['CL District'] == k])
+                temp_dtfm_curate.curate_dtfm(sk.district_list, sd, val_type)
+                for_export = for_export.append(temp_dtfm_curate.return_dtfm(), ignore_index=True, sort = False)
             
     os.chdir(f'{base_dir}/housing_csv/Significant Deals')
     old_file = pd.read_csv('significant posts.csv')

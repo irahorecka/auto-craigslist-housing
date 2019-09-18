@@ -10,6 +10,7 @@ class ContentFormat:
         self.text = text
         self.html = html
 
+    #determine if bedrooms could be incorporated in sending emails out for apt.
     def single(self, location, price, url, title):
         self.text += f'I found a nice place in {location.title()} for you for ${price} a month.{url}'
         self.html += f'I found a nice place in {location.title()} for you for ${price} a month.<br>Posting: <a href="{url}">{title.title()}</a><br>'
@@ -24,10 +25,10 @@ class ContentFormat:
 #execute commands
 def execute():
     os.chdir(base_dir)
-    search_criteria = cs.ExecSearch(sk.state_keys, sk.selected_reg, sk.district_list, sk.selected_cat)
+    search_criteria = cs.ExecSearch(sk.state_keys, sk.dist_filters, sk.selected_reg, sk.district_list, sk.selected_cat)
     search_criteria.cl_search()
     data = psb.compile_dtfm()
-    data_to_email = psb.find_rooms(data)
+    data_to_email = psb.find_rooms(data, .8, 1)
     os.chdir(base_dir)
 
     data_send = sg.PrepEmail(data_to_email)
