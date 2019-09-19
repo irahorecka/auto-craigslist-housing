@@ -18,6 +18,7 @@ class StatAnalysis:
         self.dtfm = dtfm
     
     def omit_outlier(self):
+        self.dtfm = self.dtfm.loc[self.dtfm['Price'] != 0]
         Q1 = self.dtfm['Price'].quantile(0.25)
         Q3 = self.dtfm['Price'].quantile(0.75)
         IQR = Q3 - Q1
@@ -26,7 +27,6 @@ class StatAnalysis:
         #a trimmed mean will cut too much data from either tail, those this can be adjusted
         #consult whether an outlier excision or trimmed mean should be used for negating outliers
 
-    #try a price_area analysis with price - if price is high, are you getting a good deal per square foot?
     def stat_significant(self, sd_val, val_type):
         mean_price, mean_price_area = self.dtfm['Price'].mean(), self.dtfm['Price_Area'].mean()
         sd_price, sd_price_area = self.dtfm['Price'].std(), self.dtfm['Price_Area'].std()
@@ -36,8 +36,11 @@ class StatAnalysis:
         else:
             self.dtfm = self.dtfm.loc[self.dtfm['Price'] >= (mean_price + sd_val*sd_price)]
             print('%.2f' % (mean_price + sd_val*sd_price), '%.2f' % (mean_price_area - 1*sd_price_area))
-        #Search low price/area
-        self.dtfm = self.dtfm.loc[self.dtfm['Price_Area'] <= (mean_price_area + 1*sd_price_area)] #watch for hardcoded val
+        print(self.dtfm['Price_Area'].unique())
+        if self.dtfm['Price_Area'].unique()[0] == None:
+            pass
+        else:
+            self.dtfm = self.dtfm.loc[self.dtfm['Price_Area'] <= (mean_price_area + 1*sd_price_area)] #watch for hardcoded val
 
     def select_districts(self, dist_list):
         return_dtfm = pd.DataFrame()
@@ -77,19 +80,15 @@ class DataPrep: #does this need to be a class?
         dtfm = dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = False, kind = 'quicksort')
         return dtfm
 
-
 #should the functions below be made into classes?
 def compile_dtfm():
     dtfm = pd.DataFrame()
     for filename in os.listdir():
         if filename[-4:] == '.csv':
             concat_dtfm = pd.read_csv(filename, sep = ',')
-            concat_dtfm = concat_dtfm.loc[concat_dtfm['Area'].str[-3:] == 'ft2']
             #make key for title + location and remove duplicates
             concat_dtfm['Title Key'] = concat_dtfm['Title'] + ' _ ' + concat_dtfm['Location']
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
-            concat_dtfm['Area'] = concat_dtfm['Area'].str[:-3].astype(float)
-            concat_dtfm['Price_Area'] = concat_dtfm['Price'] / concat_dtfm['Area']
             dtfm = dtfm.append(concat_dtfm, ignore_index=True, sort = False)
             #remove generated CL filenames to save space
             os.remove(filename)
@@ -106,28 +105,31 @@ def drop_and_sort(dtfm1, dtfm2):
     return dtfm
 
 def find_rooms(dtfm, sd, val_type):
-    cat_val = [clsd.cat_dict[i] for i in sk.selected_cat]
+    cat_val = sk.selected_cat
     reg_list = dtfm['CL District'].unique()
     for_export = pd.DataFrame()
     for i in cat_val:
-        if i == 'apts & housing for rent' or i == 'vacation rentals': #find categories where bedrooms will be important
+        if i == 'apa' or i == 'vac': #find categories where bedrooms will be important
             bed_list = dtfm['Bedrooms'].unique()
-        else:
-            bed_list = []
-        if len(bed_list) != 0:
+            temp_dtfm = dtfm.loc[dtfm['Area'].str[-3:] == 'ft2']
+            temp_dtfm['Area'] = temp_dtfm['Area'].str[:-3].astype(float)
+            temp_dtfm['Price_Area'] = temp_dtfm['Price'] / temp_dtfm['Area']
             for j in bed_list:
-                temp_dtfm = dtfm.loc[(dtfm['Housing Category'] == i) & (dtfm['Bedrooms'] == j)]
+                temp_dtfm = temp_dtfm.loc[(temp_dtfm['Housing Category'] == i) & (temp_dtfm['Bedrooms'] == j)]
                 for k in reg_list:    
                     temp_dtfm_curate = StatAnalysis(temp_dtfm.loc[temp_dtfm['CL District'] == k])
                     temp_dtfm_curate.curate_dtfm(sk.district_list, sd, val_type)
                     for_export = for_export.append(temp_dtfm_curate.return_dtfm(), ignore_index=True, sort = False)
         else:
+            bed_list = []
+            temp_dtfm = dtfm
+            temp_dtfm['Price_Area'] = None
             temp_dtfm = dtfm.loc[dtfm['Housing Category'] == i]
             for k in reg_list:    
                 temp_dtfm_curate = StatAnalysis(temp_dtfm.loc[temp_dtfm['CL District'] == k])
                 temp_dtfm_curate.curate_dtfm(sk.district_list, sd, val_type)
                 for_export = for_export.append(temp_dtfm_curate.return_dtfm(), ignore_index=True, sort = False)
-            
+                     
     os.chdir(f'{base_dir}/housing_csv/Significant Deals')
     old_file = pd.read_csv('significant posts.csv')
     parse_old_file = DataPrep(old_file).title_key()

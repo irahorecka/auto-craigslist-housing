@@ -6,16 +6,16 @@ class Filters:
     #extra_filters is a general filter sheet for specifics - not all housing categories adhere to every part of this filter
     #e.g. you will not look for max_bedrooms for a room/share craigslist posts
     #create selectors in the future to limit which filters are mutable by the user per category they choose
-    extra_filters = {'private_room' : None, #bool
+    extra_filters = {'private_room' : True, #bool
         'private_bath' : None, #bool
-        'cats_ok' : True, #bool
+        'cats_ok' : None, #bool
         'dogs_ok' : None, #bool
-        'min_price' : 2800,
-        'max_price' : 3450,
+        'min_price' : None,
+        'max_price' : None,
         'min_ft2' : None,
         'max_ft2' : None,
-        'min_bedrooms' : 1,
-        'max_bedrooms' : 2,
+        'min_bedrooms' : None,
+        'max_bedrooms' : None,
         'min_bathrooms' : None,
         'max_bathrooms' : None,
         'no_smoking' : None, #bool
