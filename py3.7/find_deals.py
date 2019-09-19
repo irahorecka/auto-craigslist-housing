@@ -1,6 +1,3 @@
-#Look for all sublets and rooms in sfbay craigslist, sort out statistically significant pricings, i.e. mean - 1sd after outlier removal
-#Afterwards, only sort out districts of interest, e.g. berkeley, oakland, fremont.
-
 import pandas as pd
 import os
 import csv
