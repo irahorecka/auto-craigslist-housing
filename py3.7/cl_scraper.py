@@ -43,13 +43,11 @@ class CL_Housing_Select:
 
 def my_logger(func):
     logging.basicConfig(filename=f'{func.__name__}.log', level = logging.INFO)
-
     def wrapper(*args, **kwargs):
         date_time = str(datetime.datetime.now())[:-10]
         logging.info(
             f'Ran with filters: {clsd.extra_filters} at {date_time}')
         return func(*args, **kwargs)
-
     return wrapper
 
 
