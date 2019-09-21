@@ -71,20 +71,30 @@ class ExecSearch:
     def cl_search(self):
         t0 = time.time()
         housing_dict = clsd.cat_dict
+        if len(self.zip_list) != 0:
+            self.room_filter['zip_code'] = self.zip_list[0]
+            self.room_filter['search_distance'] = self.zip_list[1]
         #reg site must be included for zip_search to work outside of the bay area!! refactor refactor
         for state in self.states:
             focus_list = []
             try:
                 for reg, reg_name in eval(f'sr.{state}')["focus_dist"].items():
                     if reg in self.regions:
+                        is_loop = True
                         if reg == 'newyork' or reg == 'boston':
                             housing_dict = clsd.apa_dict
                         for sub_reg in reg_name:
                             for cat in housing_dict:
                                 if cat not in self.house_filter:
                                     continue
+                                elif self.room_filter['zip_code'] != None and self.room_filter['search_distance'] != None:
+                                    self.search_package(state, reg, cat)
+                                    is_loop = False
+                                    break
                                 else:
                                     self.search_package(state, reg, cat, sub_reg)
+                            if not is_loop:
+                                break
                     focus_list.append(reg)
             except KeyError:
                 for reg, reg_name in eval(f'sr.{state}').items():
@@ -92,9 +102,6 @@ class ExecSearch:
                         if reg in focus_list:
                             continue
                         else:
-                            if len(self.zip_list) != 0:
-                                self.room_filter['zip_code'] = self.zip_list[0]
-                                self.room_filter['search_distance'] = self.zip_list[1]
                             try:
                                 for cat in housing_dict:
                                     if cat not in self.house_filter:

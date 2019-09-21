@@ -33,8 +33,7 @@ class StatAnalysis:
         else:
             self.dtfm = self.dtfm.loc[self.dtfm['Price'] >= (mean_price + sd_val*sd_price)]
             print('%.2f' % (mean_price + sd_val*sd_price), '%.2f' % (mean_price_area - 1*sd_price_area))
-        print(self.dtfm['Price_Area'].unique())
-        if self.dtfm['Price_Area'].unique()[0] == None:
+        if all(isinstance(i, type(None)) for i in self.dtfm['Price_Area']):
             pass
         else:
             self.dtfm = self.dtfm.loc[self.dtfm['Price_Area'] <= (mean_price_area + 1*sd_price_area)] #watch for hardcoded val
@@ -88,7 +87,7 @@ def compile_dtfm():
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
             dtfm = dtfm.append(concat_dtfm, ignore_index=True, sort = False)
             #remove generated CL filenames to save space
-            os.remove(filename)
+            #os.remove(filename)
         else:
             pass
     dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
@@ -107,14 +106,15 @@ def find_rooms(dtfm, sd, val_type):
     for_export = pd.DataFrame()
     for i in cat_val:
         if i == 'apa' or i == 'vac': #find categories where bedrooms will be important
-            bed_list = dtfm['Bedrooms'].unique()
+            bed_list = list(dtfm['Bedrooms'].unique())
+            bed_list.remove('None')
             temp_dtfm = dtfm.loc[dtfm['Area'].str[-3:] == 'ft2']
             temp_dtfm['Area'] = temp_dtfm['Area'].str[:-3].astype(float)
             temp_dtfm['Price_Area'] = temp_dtfm['Price'] / temp_dtfm['Area']
             for j in bed_list:
-                temp_dtfm = temp_dtfm.loc[(temp_dtfm['Housing Category'] == i) & (temp_dtfm['Bedrooms'] == j)]
+                temp_dtfm_bed = temp_dtfm.loc[(temp_dtfm['Housing Category'] == i) & (temp_dtfm['Bedrooms'] == j)]
                 for k in reg_list:    
-                    temp_dtfm_curate = StatAnalysis(temp_dtfm.loc[temp_dtfm['CL District'] == k])
+                    temp_dtfm_curate = StatAnalysis(temp_dtfm_bed.loc[temp_dtfm['CL District'] == k])
                     temp_dtfm_curate.curate_dtfm(sk.district_list, sd, val_type)
                     for_export = for_export.append(temp_dtfm_curate.return_dtfm(), ignore_index=True, sort = False)
         else:
