@@ -76,6 +76,7 @@ class DataPrep: #does this need to be a class?
         dtfm = dtfm.sort_values(by = ['Date Posted', 'Num Time'], ascending = [False, False], inplace = False, kind = 'quicksort')
         return dtfm
 
+
 #should the functions below be made into classes?
 def compile_dtfm():
     dtfm = pd.DataFrame()
@@ -87,7 +88,7 @@ def compile_dtfm():
             concat_dtfm['Price'] = concat_dtfm['Price'].str[1:].astype(float)
             dtfm = dtfm.append(concat_dtfm, ignore_index=True, sort = False)
             #remove generated CL filenames to save space
-            #os.remove(filename)
+            os.remove(filename)
         else:
             pass
     dtfm = dtfm.drop_duplicates(subset = ['Title Key'], keep = False)
@@ -105,7 +106,7 @@ def find_rooms(dtfm, sd, val_type):
     reg_list = dtfm['CL District'].unique()
     for_export = pd.DataFrame()
     for i in cat_val:
-        if i == 'apa' or i == 'vac': #find categories where bedrooms will be important
+        if i == 'apa' or i == 'vac': #find categories where bedrooms & price/area will be important
             bed_list = list(dtfm['Bedrooms'].unique())
             bed_list.remove('None')
             temp_dtfm = dtfm.loc[dtfm['Area'].str[-3:] == 'ft2']

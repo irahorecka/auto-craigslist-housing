@@ -17,8 +17,8 @@ class SelectionKeys:
     state_keys = ['california']
     selected_reg = ['sfbay']
     selected_cat = ['apa']
-    district_list = ['oakland','berkeley','richmond','el cerrito','san leandro','alameda','albany','hercules']
-    dist_filters = [] #[zipcode, miles from zip]
+    district_list = []#['oakland','berkeley','richmond','el cerrito','san leandro','alameda','albany','hercules']
+    dist_filters = [94010,5] #[zipcode, miles from zip]
     value_key = 0 #0 for statistically cheaper, 1 for statistically expensive 
     sd_val = 0.8
     name = 'ira'
