@@ -25,8 +25,8 @@ class ContentFormat:
 #execute commands
 def execute():
     os.chdir(base_dir)
-    search_criteria = cs.ExecSearch(sk.state_keys, sk.dist_filters, sk.selected_reg, sk.district_list, sk.selected_cat)
-    search_criteria.cl_search()
+    #search_criteria = cs.ExecSearch(sk.state_keys, sk.dist_filters, sk.selected_reg, sk.district_list, sk.selected_cat)
+    #search_criteria.cl_search()
     data = fd.compile_dtfm()
     data_to_email = fd.find_rooms(data, sk.sd_val, sk.value_key)
     os.chdir(base_dir)

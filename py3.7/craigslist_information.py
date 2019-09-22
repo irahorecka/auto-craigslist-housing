@@ -14,8 +14,8 @@ class Filters:
         'max_price' : None,
         'min_ft2' : None,
         'max_ft2' : None,
-        'min_bedrooms' : None,
-        'max_bedrooms' : None,
+        'min_bedrooms' : 1,
+        'max_bedrooms' : 1,
         'min_bathrooms' : None,
         'max_bathrooms' : None,
         'no_smoking' : None, #bool
