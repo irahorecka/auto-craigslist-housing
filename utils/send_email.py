@@ -1,5 +1,6 @@
 import os
-import smtplib, ssl
+import smtplib
+import ssl
 import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -8,6 +9,8 @@ from .paths import DATA_DIR
 
 
 def write_email():
+    """Main function to construct email sender, recipients,
+    and content for new craigslist housing posts."""
     metadata = emailMetaData
     email_body = parse_unique_dtfm(Email())
     try:
@@ -19,6 +22,8 @@ def write_email():
 
 
 class emailMetaData:
+    """Constructor for email metadata."""
+
     sender_email = os.environ.get("EMAIL_USER")
     sender_password = os.environ.get("EMAIL_PASS")
     receiver_email = "ira89@icloud.com"
@@ -30,6 +35,8 @@ class emailMetaData:
 
 
 class Email:
+    """Construct email body from new posts."""
+
     def __init__(self):
         self.text_body = ""
         self.html_body = ""
@@ -56,6 +63,7 @@ class Email:
 
 
 def send_email(metadata, text, html):
+    """Build and send email."""
     text_mail = MIMEText(text, "plain")
     html_mail = MIMEText(html, "html")
     message = metadata.message
@@ -72,6 +80,8 @@ def send_email(metadata, text, html):
 
 
 def parse_unique_dtfm(emailObj):
+    """Retrieve relevant information from unique and new
+    craigslist housing posts."""
     unique_dtfm = pd.read_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
     if unique_dtfm.shape[0] == 0:
         return
@@ -91,6 +101,7 @@ def parse_unique_dtfm(emailObj):
 
 
 def verify_valid_post(url):
+    """Ensure valid craigslist post prior to sending."""
     post = requests.get(url).content.decode("utf-8")
     invalid_flag = "This posting has been flagged for removal."
     deleted_flag = "This posting has been deleted by its author."

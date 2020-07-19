@@ -140,7 +140,8 @@ def concat_similar_results_to_csv(state, reg):
     grouped_files = [
         file
         for file in os.listdir()
-        if f"{state}_{reg}" in file and "CraigslistHousing" not in file  # don't append master file
+        if f"{state}_{reg}" in file
+        and "CraigslistHousing" not in file  # don't append master file
     ]
     for index, file in enumerate(grouped_files):
         if os.path.isfile(file):

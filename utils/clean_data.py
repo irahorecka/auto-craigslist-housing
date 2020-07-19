@@ -1,10 +1,13 @@
 import datetime
 import os
 import pandas as pd
-from .paths import BASE_DIR, DATA_DIR
+from .paths import DATA_DIR
 
 
 def filter_results():
+    """Main function to read, clean, process, and generate
+    craigslist housing posts within the range and specifications
+    desired by the user."""
     previous_peninsula = pd.read_csv(
         os.path.join(DATA_DIR, "cleaned_peninsula_housing.csv")
     )
@@ -30,6 +33,7 @@ def filter_results():
 
 
 def clean_headers(dtfm):
+    """Clean header names for simple downstream handling."""
     dtfm.columns = (
         dtfm.columns.str.strip()
         .str.lower()
@@ -42,6 +46,7 @@ def clean_headers(dtfm):
 
 
 def rm_repost(dtfm):
+    """Remove repost ids."""
     dtfm_no_repost = dtfm.loc[dtfm["repost_of_post_id"] == "None"]
     dtfm_unique = dtfm.loc[dtfm["repost_of_post_id"] != "None"].drop_duplicates(
         subset="repost_of_post_id"
@@ -51,29 +56,35 @@ def rm_repost(dtfm):
 
 
 def convert_price_to_int(dtfm):
+    """Convert price values to integers."""
     dtfm.price = dtfm.price.str.replace("$", "").replace(",", "").astype("int")
     return dtfm
 
 
 def get_price_range(dtfm):
+    """Select posts within a price range."""
     return dtfm.loc[dtfm.price.between(1800, 2800, inclusive=True)]
 
 
 def select_bedrooms(dtfm):
+    """Select desired bedrooms."""
     return dtfm.loc[dtfm.bedrooms == "2"]
 
 
 def convert_date_to_dttm(dtfm):
+    """Convert date string to datetime object."""
     dtfm.date_posted = pd.to_datetime(dtfm.date_posted)
     dtfm.time_posted = pd.to_datetime(dtfm.time_posted, format="%H:%M")
     return dtfm
 
 
 def date_one_week_today(dtfm):
+    """Select craigslist posts posted within one week of today."""
     return dtfm[dtfm.date_posted > datetime.datetime.now() - pd.to_timedelta("7day")]
 
 
 def sort_time_date(dtfm):
+    """Sort posts by time then date - newest posts first."""
     dtfm = dtfm.sort_values(by="time_posted", ascending=False)
     dtfm = dtfm.sort_values(by="date_posted", ascending=False)
 
@@ -81,6 +92,8 @@ def sort_time_date(dtfm):
 
 
 def find_new_posts(old_dtfm, new_dtfm):
+    """Compare old datatframe with new dataframe. Find unique
+    and new posts."""
     combined_dtfm = new_dtfm.append(old_dtfm)
     combined_dtfm = combined_dtfm.drop_duplicates("post_id", keep=False)
 

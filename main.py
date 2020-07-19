@@ -4,9 +4,10 @@ import utils
 
 
 def main(geotagged=False):
-    """Function to initialize scraping of Craigslist housing
-    data. Uses static JSON files from /static dir and
-    parallel + scraping functions from /utils dir."""
+    """Main function to execute craigslist housing scraping
+    for Peninsula region, processing existing and new housing
+    information, and sending appropriate posts to users via
+    email."""
 
     all_locations = utils.craigslist_regions()
     united_states = all_locations.get("united_states")
@@ -23,4 +24,4 @@ def main(geotagged=False):
 if __name__ == "__main__":
     while True:
         main()
-        time.sleep(3600)
+        time.sleep(3600)  # sleep 1hr
