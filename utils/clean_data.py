@@ -5,7 +5,10 @@ from .paths import BASE_DIR, DATA_DIR
 
 
 def filter_results():
-    peninsula = pd.read_csv(
+    previous_peninsula = pd.read_csv(
+        os.path.join(DATA_DIR, "cleaned_peninsula_housing.csv")
+    )
+    new_peninsula = pd.read_csv(
         os.path.join(DATA_DIR, "CraigslistHousing_california_pen.csv")
     )
     cleaning_funcs = (
@@ -16,11 +19,14 @@ def filter_results():
         select_bedrooms,
         convert_date_to_dttm,
         date_one_week_today,
+        sort_time_date,
     )
     for func in cleaning_funcs:
-        peninsula = func(peninsula)
+        new_peninsula = func(new_peninsula)
 
-    peninsula.to_csv(os.path.join(DATA_DIR, "cleaned_peninsula_housing.csv"))
+    unique_peninsula = find_new_posts(previous_peninsula, new_peninsula)
+    unique_peninsula.to_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
+    new_peninsula.to_csv(os.path.join(DATA_DIR, "cleaned_peninsula_housing.csv"))
 
 
 def clean_headers(dtfm):
@@ -65,3 +71,17 @@ def convert_date_to_dttm(dtfm):
 
 def date_one_week_today(dtfm):
     return dtfm[dtfm.date_posted > datetime.datetime.now() - pd.to_timedelta("7day")]
+
+
+def sort_time_date(dtfm):
+    dtfm = dtfm.sort_values(by="time_posted", ascending=False)
+    dtfm = dtfm.sort_values(by="date_posted", ascending=False)
+
+    return dtfm
+
+
+def find_new_posts(old_dtfm, new_dtfm):
+    combined_dtfm = new_dtfm.append(old_dtfm)
+    combined_dtfm = combined_dtfm.drop_duplicates("post_id", keep=False)
+
+    return combined_dtfm
