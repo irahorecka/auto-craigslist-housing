@@ -1,4 +1,5 @@
 import sys
+import time
 import utils
 
 
@@ -15,8 +16,11 @@ def main(geotagged=False):
     sys.stdout.write("\r%s" % "Gathering data...")
     utils.scrape_housing(peninsula)
     utils.filter_results()
+    utils.write()
     sys.stdout.write("\r%s" % "Finished.")
 
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
+        time.sleep(3600)
