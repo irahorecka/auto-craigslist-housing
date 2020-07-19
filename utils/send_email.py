@@ -1,9 +1,21 @@
 import os
 import smtplib, ssl
+import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import pandas as pd
 from .paths import DATA_DIR
+
+
+def write_email():
+    metadata = emailMetaData
+    email_body = parse_unique_dtfm(Email())
+    try:
+        text, html = email_body.emailMarkup()  # may return None - catch below
+        if text:  # make sure no empty str returned
+            send_email(metadata, text, html)
+    except AttributeError:
+        pass
 
 
 class emailMetaData:
@@ -43,23 +55,6 @@ class Email:
         return text_markup, html_markup
 
 
-def parse_unique_dtfm(emailObj):
-    unique_dtfm = pd.read_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
-    if unique_dtfm.shape[0] == 0:
-        return
-
-    for _, post in unique_dtfm.iterrows():
-        location = post["location"]
-        price = "%.0f" % post["price"]
-        bedroom = post["bedrooms"]
-        url = post["url"]
-        title = post["title"]
-
-        emailObj.emailBody(location, price, bedroom, url, title)
-
-    return emailObj
-
-
 def send_email(metadata, text, html):
     text_mail = MIMEText(text, "plain")
     html_mail = MIMEText(html, "html")
@@ -76,11 +71,28 @@ def send_email(metadata, text, html):
         )
 
 
-def write():
-    metadata = emailMetaData
-    email_body = parse_unique_dtfm(Email())
-    try:
-        text, html = email_body.emailMarkup()  # may return None - catch below
-        send_email(metadata, text, html)
-    except AttributeError:
-        pass
+def parse_unique_dtfm(emailObj):
+    unique_dtfm = pd.read_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
+    if unique_dtfm.shape[0] == 0:
+        return
+
+    for _, post in unique_dtfm.iterrows():
+        location = post["location"]
+        price = "%.0f" % post["price"]
+        bedroom = post["bedrooms"]
+        url = post["url"]
+        title = post["title"]
+
+        if verify_valid_post(url):
+            continue
+        emailObj.emailBody(location, price, bedroom, url, title)
+
+    return emailObj
+
+
+def verify_valid_post(url):
+    post = requests.get(url).content.decode("utf-8")
+    invalid_flag = "This posting has been flagged for removal."
+    deleted_flag = "This posting has been deleted by its author."
+
+    return any(flag in post for flag in [invalid_flag, deleted_flag])

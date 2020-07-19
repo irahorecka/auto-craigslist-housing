@@ -16,7 +16,7 @@ def main(geotagged=False):
     sys.stdout.write("\r%s" % "Gathering data...")
     utils.scrape_housing(peninsula)
     utils.filter_results()
-    utils.write()
+    utils.write_email()
     sys.stdout.write("\r%s" % "Finished.")
 
 
