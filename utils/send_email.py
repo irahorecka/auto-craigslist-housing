@@ -26,12 +26,12 @@ class EmailMetadata:
 
     sender_email = os.environ.get("EMAIL_USER")
     sender_password = os.environ.get("EMAIL_PASS")
-    receiver_email = "ira89@icloud.com"
+    receiver_email = ["ira89@icloud.com", "nanna.takahashi@gmail.com"]
 
     message = MIMEMultipart("alternative")
     message["Subject"] = "Craigslist Housing"
     message["From"] = sender_email
-    message["To"] = receiver_email
+    message["To"] = ""  # to be populated in future
 
 
 class Email:
@@ -105,6 +105,6 @@ def send_email(metadata, text, html):
     ssl_context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl_context) as server:
         server.login(metadata.sender_email, metadata.sender_password)
-        server.sendmail(
-            metadata.sender_email, metadata.receiver_email, message.as_string()
-        )
+        for recipient in metadata.receiver_email:
+            message["To"] = recipient
+            server.sendmail(metadata.sender_email, recipient, message.as_string())
