@@ -18,6 +18,7 @@ def main(geotagged=False):
     utils.scrape_housing(peninsula)
     utils.filter_results()
     utils.write_email()
+    sys.stdout.write("\r%s" % "                 ")  # hacky way to clear screen
     sys.stdout.write("\r%s" % "Finished.")
 
 

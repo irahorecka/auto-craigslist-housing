@@ -11,7 +11,7 @@ from .paths import DATA_DIR
 def write_email():
     """Main function to construct email sender, recipients,
     and content for new craigslist housing posts."""
-    metadata = emailMetaData
+    metadata = EmailMetadata
     email_body = parse_unique_dtfm(Email())
     try:
         text, html = email_body.emailMarkup()  # may return None - catch below
@@ -21,7 +21,7 @@ def write_email():
         pass
 
 
-class emailMetaData:
+class EmailMetadata:
     """Constructor for email metadata."""
 
     sender_email = os.environ.get("EMAIL_USER")
@@ -93,15 +93,16 @@ def parse_unique_dtfm(emailObj):
         url = post["url"]
         title = post["title"]
 
-        if verify_valid_post(url):
+        if verify_invalid_post(url):
             continue
         emailObj.emailBody(location, price, bedroom, url, title)
 
     return emailObj
 
 
-def verify_valid_post(url):
-    """Ensure valid craigslist post prior to sending."""
+def verify_invalid_post(url):
+    """Ensure valid craigslist post prior to sending.
+    Return True if invalid."""
     post = requests.get(url).content.decode("utf-8")
     invalid_flag = "This posting has been flagged for removal."
     deleted_flag = "This posting has been deleted by its author."
