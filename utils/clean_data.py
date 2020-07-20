@@ -14,7 +14,7 @@ def filter_results():
     new_peninsula = pd.read_csv(
         os.path.join(DATA_DIR, "CraigslistHousing_california_pen.csv")
     )
-    cleaning_funcs = (
+    data_cleaning_funcs = (
         clean_headers,
         rm_repost,
         convert_price_to_int,
@@ -24,11 +24,11 @@ def filter_results():
         date_one_week_today,
         sort_time_date,
     )
-    for func in cleaning_funcs:
+    for func in data_cleaning_funcs:
         new_peninsula = func(new_peninsula)
 
-    unique_peninsula = find_new_posts(previous_peninsula, new_peninsula)
-    unique_peninsula.to_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
+    unique_posts = find_new_posts(previous_peninsula, new_peninsula)
+    unique_posts.to_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
     new_peninsula.to_csv(os.path.join(DATA_DIR, "cleaned_peninsula_housing.csv"))
 
 

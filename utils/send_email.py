@@ -12,9 +12,9 @@ def write_email():
     """Main function to construct email sender, recipients,
     and content for new craigslist housing posts."""
     metadata = EmailMetadata
-    email_body = parse_unique_dtfm(Email())
+    email_obj = parse_unique_dtfm(Email())
     try:
-        text, html = email_body.emailMarkup()  # may return None - catch below
+        text, html = email_obj.markup()  # may return None - catch below
         if text:  # make sure no empty str returned
             send_email(metadata, text, html)
     except AttributeError:
@@ -41,11 +41,11 @@ class Email:
         self.text_body = ""
         self.html_body = ""
 
-    def emailBody(self, location, price, bedroom, url, title):
+    def body(self, location, price, bedroom, url, title):
         self.text_body += f"${price} a month in {location.title()}. ({bedroom} bedroom) {title.title()} ({url})"
         self.html_body += f'${price} a month in {location.title()}. ({bedroom} bedroom)<br><a href="{url}">{title.title()}</a><br>'
 
-    def emailMarkup(self):
+    def markup(self):
         text_markup = f"""\
             {self.text_body}
         """
@@ -60,23 +60,6 @@ class Email:
         """
 
         return text_markup, html_markup
-
-
-def send_email(metadata, text, html):
-    """Build and send email."""
-    text_mail = MIMEText(text, "plain")
-    html_mail = MIMEText(html, "html")
-    message = metadata.message
-
-    message.attach(text_mail)
-    message.attach(html_mail)
-
-    ssl_context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl_context) as server:
-        server.login(metadata.sender_email, metadata.sender_password)
-        server.sendmail(
-            metadata.sender_email, metadata.receiver_email, message.as_string()
-        )
 
 
 def parse_unique_dtfm(emailObj):
@@ -95,7 +78,7 @@ def parse_unique_dtfm(emailObj):
 
         if verify_invalid_post(url):
             continue
-        emailObj.emailBody(location, price, bedroom, url, title)
+        emailObj.body(location, price, bedroom, url, title)
 
     return emailObj
 
@@ -108,3 +91,20 @@ def verify_invalid_post(url):
     deleted_flag = "This posting has been deleted by its author."
 
     return any(flag in post for flag in [invalid_flag, deleted_flag])
+
+
+def send_email(metadata, text, html):
+    """Build and send email."""
+    text_mail = MIMEText(text, "plain")
+    html_mail = MIMEText(html, "html")
+    message = metadata.message
+
+    message.attach(text_mail)
+    message.attach(html_mail)
+
+    ssl_context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl_context) as server:
+        server.login(metadata.sender_email, metadata.sender_password)
+        server.sendmail(
+            metadata.sender_email, metadata.receiver_email, message.as_string()
+        )
