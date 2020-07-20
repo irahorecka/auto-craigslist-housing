@@ -23,6 +23,7 @@ def main(geotagged=False):
 
 
 if __name__ == "__main__":
+    hours = lambda x: x * 3600
     while True:
         main()
-        time.sleep(3600)  # sleep 1hr
+        time.sleep(hours(3))  # sleep x hours
