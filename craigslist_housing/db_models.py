@@ -4,7 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
-from .paths import BASE_DIR
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
 Base = declarative_base()
 
@@ -30,7 +31,8 @@ class Post(Base):
 
 def get_new_posts(filtered_posts):
     engine = create_engine(
-        "sqlite:///" + os.path.join(BASE_DIR, "utils", "posts.db"), echo=False
+        "sqlite:///" + os.path.join(BASE_DIR, "craigslist_housing", "posts.db"),
+        echo=False,
     )
     Base.metadata.create_all(engine)
 

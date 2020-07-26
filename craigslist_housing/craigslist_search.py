@@ -1,69 +1,47 @@
-import csv
-import datetime
-import os
+import sys
 import requests
 from craigslist import CraigslistHousing
 import pandas as pd
-from . import get_static_file
+from utils import get_static_file
 
 CODE_BREAK = ";n@nih;"
 
 
-def scrape_housing(craigslist_region, housing_category="apa"):
+def scrape(housing_category="apa", geotagged=False):
     """Module function to appropriately scrape and write Craigslist
     housing information using specified housing categories and filters."""
-    if len(craigslist_region) == 4:
-        state, region, sub_region, geotag_bool = craigslist_region
-    else:
-        state, region, geotag_bool = craigslist_region
-        sub_region = ""
+    posts = query_data(housing_category, geotagged)
+    if not posts:
+        sys.exit(1)  # exit due to connection failure
 
-    posts = query_housing_data(state, region, sub_region, housing_category, geotag_bool)
     posts = [post.split(CODE_BREAK) for post in posts]
     posts_column = posts.pop(0)
 
     return pd.DataFrame(posts, columns=posts_column)
 
 
-def query_housing_data(state, reg, sub_reg, housing_category, geotag):
+def query_data(housing_category, geotag):
     """A function to apply housing filters and instantiate
     craigslist.CraigslistHousing object with appropriate data."""
 
     search_filters = get_static_file.search_filters()
     try:
-        if sub_reg:
-            housing_object = CraigslistHousing(
-                site=reg,
-                area=sub_reg,
-                category=housing_category,
-                filters=search_filters,
-            )
-            return mine_housing_data(
-                housing_object, state, reg, housing_category, geotag, sub_reg=sub_reg
-            )
-        else:
-            housing_object = CraigslistHousing(
-                site=reg, category=housing_category, filters=search_filters
-            )
-            return mine_housing_data(
-                housing_object, state, reg, housing_category, geotag
-            )
-    except requests.exceptions.ConnectionError as error:
+        housing_object = CraigslistHousing(
+            category=housing_category, filters=search_filters
+        )
+        return mine_data(housing_object, housing_category, geotag)
+    except requests.exceptions.ConnectionError:
         # PATCH THIS FOR BETTER HANDLING
-        print(error)
         return
 
 
-def mine_housing_data(
-    housing_obj, state, region, housing_category, geotagged, sub_reg="",
-):
+def mine_data(housing_obj, housing_category, geotagged):
     """A function to appropritely concatenate information sourced from
     the Craigslist housing object to a header list for downstream CSV
     export."""
 
     header = [
-        f"State or Country{CODE_BREAK}Region{CODE_BREAK}"
-        f"Subregion{CODE_BREAK}Housing Category{CODE_BREAK}"
+        f"Housing Category{CODE_BREAK}"
         f"Post ID{CODE_BREAK}Repost of (Post ID){CODE_BREAK}"
         f"Title{CODE_BREAK}URL{CODE_BREAK}"
         f"Date Posted{CODE_BREAK}Time Posted{CODE_BREAK}"
@@ -74,8 +52,6 @@ def mine_housing_data(
     try:
         header.extend(
             [
-                f"{state}{CODE_BREAK}{region}{CODE_BREAK}"
-                f"{sub_reg if sub_reg else region}{CODE_BREAK}"
                 f"{get_static_file.housing_categories().get(housing_category)}{CODE_BREAK}"
                 f"{post['id']}{CODE_BREAK}{post['repost_of']}{CODE_BREAK}"
                 f"{post['name']}{CODE_BREAK}{post['url']}{CODE_BREAK}"
