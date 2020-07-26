@@ -15,9 +15,12 @@ def main(geotagged=False):
     peninsula.append(geotagged)
 
     sys.stdout.write("\r%s" % "Gathering data...")
-    utils.scrape_housing(peninsula)
-    utils.filter_results()
-    utils.write_email()
+
+    posts = utils.scrape_housing(peninsula, housing_category="apa")
+    filtered_posts = utils.filter_posts(posts)
+    new_posts = utils.get_new_posts(filtered_posts)
+    # utils.write_email(new_posts)
+
     sys.stdout.write("\r%s" % "                 ")  # hacky way to clear screen
     sys.stdout.write("\r%s" % "Finished.")
 
