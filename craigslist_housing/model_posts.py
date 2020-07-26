@@ -45,13 +45,13 @@ def get_new_posts(filtered_posts):
         )
         if post_session:  # Don't add post to db if it already exists
             continue
-        write_to_db(session, post)
+        write_to_db(post, session)
         new_posts = new_posts.append(post)
 
     return new_posts
 
 
-def write_to_db(session, post):
+def write_to_db(post, session):
     post_db = Post(
         post_id=post.get("post_id"),
         title=post.get("title"),
