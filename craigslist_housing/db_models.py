@@ -35,7 +35,6 @@ def get_new_posts(filtered_posts):
         echo=False,
     )
     Base.metadata.create_all(engine)
-
     Session = sessionmaker(bind=engine)
     session = Session()
 
@@ -44,8 +43,7 @@ def get_new_posts(filtered_posts):
         post_session = (
             session.query(Post).filter_by(post_id=post.get("post_id")).first()
         )
-        # Don't add posting to db if it already exists
-        if post_session:
+        if post_session:  # Don't add post to db if it already exists
             continue
         write_to_db(session, post)
         new_posts = new_posts.append(post)
@@ -54,7 +52,7 @@ def get_new_posts(filtered_posts):
 
 
 def write_to_db(session, post):
-    post = Post(
+    post_db = Post(
         post_id=post.get("post_id"),
         title=post.get("title"),
         url=post.get("url"),
@@ -65,5 +63,5 @@ def write_to_db(session, post):
         bedrooms=post.get("bedrooms"),
         area=post.get("area"),
     )
-    session.add(post)
+    session.add(post_db)
     session.commit()
