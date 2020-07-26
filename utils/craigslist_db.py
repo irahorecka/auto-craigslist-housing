@@ -7,11 +7,6 @@ import pandas as pd
 from .paths import BASE_DIR
 
 Base = declarative_base()
-engine = create_engine("sqlite:///" + os.path.join(BASE_DIR, "utils", "posts.db"), echo=False)
-Base.metadata.create_all(engine)
-
-Session = sessionmaker(bind=engine)
-session = Session()
 
 
 class Post(Base):
@@ -33,21 +28,30 @@ class Post(Base):
     area = Column(String)
 
 
-def get_new_posts(filtered_posts):   
+def get_new_posts(filtered_posts):
+    engine = create_engine(
+        "sqlite:///" + os.path.join(BASE_DIR, "utils", "posts.db"), echo=False
+    )
+    Base.metadata.create_all(engine)
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
     new_posts = pd.DataFrame(columns=list(filtered_posts))
     for _, post in filtered_posts.iterrows():
-        post_session = session.query(Post).filter_by(post_id=post.get("post_id")).first()
+        post_session = (
+            session.query(Post).filter_by(post_id=post.get("post_id")).first()
+        )
         # Don't add posting to db if it already exists
         if post_session:
             continue
-        write_to_db(post)
-        # add new posts to pandas dataframe
+        write_to_db(session, post)
         new_posts = new_posts.append(post)
-    
+
     return new_posts
 
 
-def write_to_db(post):
+def write_to_db(session, post):
     post = Post(
         post_id=post.get("post_id"),
         title=post.get("title"),
@@ -61,13 +65,3 @@ def write_to_db(post):
     )
     session.add(post)
     session.commit()
-
-
-# if __name__ == "__main__":
-#     engine = create_engine("sqlite:///posts.db", echo=False)
-#     Base.metadata.create_all(engine)
-
-#     Session = sessionmaker(bind=engine)
-#     session = Session()
-#     df = pd.read_csv("test.csv")
-#     get_new_posts(df)

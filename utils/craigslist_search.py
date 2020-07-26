@@ -21,7 +21,7 @@ def scrape_housing(craigslist_region, housing_category="apa"):
     posts = query_housing_data(state, region, sub_region, housing_category, geotag_bool)
     posts = [post.split(CODE_BREAK) for post in posts]
     posts_column = posts.pop(0)
-    print(posts[1])
+
     return pd.DataFrame(posts, columns=posts_column)
 
 

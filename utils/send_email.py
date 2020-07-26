@@ -11,7 +11,7 @@ def write_email(new_posts):
     """Main function to construct email sender, recipients,
     and content for new craigslist housing posts."""
     metadata = EmailMetadata
-    email_obj = parse_unique_dtfm(Email())
+    email_obj = parse_unique_dtfm(Email(), new_posts)
     try:
         text, html = email_obj.markup()  # may return None - catch below
         if text:  # make sure no empty str returned
