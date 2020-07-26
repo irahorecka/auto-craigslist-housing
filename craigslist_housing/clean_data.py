@@ -1,19 +1,11 @@
 import datetime
-import os
 import pandas as pd
-from .paths import DATA_DIR
 
 
-def filter_results():
+def filter_posts(posts):
     """Main function to read, clean, process, and generate
     craigslist housing posts within the range and specifications
     desired by the user."""
-    previous_peninsula = pd.read_csv(
-        os.path.join(DATA_DIR, "cleaned_peninsula_housing.csv")
-    )
-    new_peninsula = pd.read_csv(
-        os.path.join(DATA_DIR, "CraigslistHousing_california_pen.csv")
-    )
     data_cleaning_funcs = (
         clean_headers,
         rm_repost,
@@ -25,11 +17,9 @@ def filter_results():
         sort_time_date,
     )
     for func in data_cleaning_funcs:
-        new_peninsula = func(new_peninsula)
+        posts = func(posts)
 
-    unique_posts = find_new_posts(previous_peninsula, new_peninsula)
-    unique_posts.to_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
-    new_peninsula.to_csv(os.path.join(DATA_DIR, "cleaned_peninsula_housing.csv"))
+    return posts
 
 
 def clean_headers(dtfm):
@@ -89,12 +79,3 @@ def sort_time_date(dtfm):
     dtfm = dtfm.sort_values(by="date_posted", ascending=False)
 
     return dtfm
-
-
-def find_new_posts(old_dtfm, new_dtfm):
-    """Compare old datatframe with new dataframe. Find unique
-    and new posts."""
-    combined_dtfm = new_dtfm.append(old_dtfm)
-    combined_dtfm = combined_dtfm.drop_duplicates("post_id", keep=False)
-
-    return combined_dtfm

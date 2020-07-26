@@ -4,15 +4,13 @@ import ssl
 import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import pandas as pd
-from .paths import DATA_DIR
 
 
-def write_email():
+def write_email(new_posts):
     """Main function to construct email sender, recipients,
     and content for new craigslist housing posts."""
     metadata = EmailMetadata
-    email_obj = parse_unique_dtfm(Email())
+    email_obj = parse_unique_dtfm(Email(), new_posts)
     try:
         text, html = email_obj.markup()  # may return None - catch below
         if text:  # make sure no empty str returned
@@ -26,7 +24,7 @@ class EmailMetadata:
 
     sender_email = os.environ.get("EMAIL_USER")
     sender_password = os.environ.get("EMAIL_PASS")
-    receiver_email = ["ira89@icloud.com", "nanna.takahashi@gmail.com"]
+    receiver_email = ["ira89@icloud.com"]
 
     message = MIMEMultipart("alternative")
     message["Subject"] = "Craigslist Housing"
@@ -62,14 +60,13 @@ class Email:
         return text_markup, html_markup
 
 
-def parse_unique_dtfm(emailObj):
+def parse_unique_dtfm(emailObj, new_posts):
     """Retrieve relevant information from unique and new
     craigslist housing posts."""
-    unique_dtfm = pd.read_csv(os.path.join(DATA_DIR, "new_peninsula_housing.csv"))
-    if unique_dtfm.shape[0] == 0:
+    if new_posts.shape[0] == 0:
         return
 
-    for _, post in unique_dtfm.iterrows():
+    for _, post in new_posts.iterrows():
         location = post["location"]
         price = "%.0f" % post["price"]
         bedroom = post["bedrooms"]
