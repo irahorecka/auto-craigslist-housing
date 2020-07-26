@@ -29,7 +29,7 @@ class EmailMetadata:
     message = MIMEMultipart("alternative")
     message["Subject"] = "Craigslist Housing"
     message["From"] = sender_email
-    message["To"] = ""  # to be populated in future
+    message["To"] = ""  # to be populated downstream
 
 
 class Email:
