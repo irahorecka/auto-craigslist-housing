@@ -1,3 +1,3 @@
-from .craigslist_search import scrape
+from .scrape_posts import scrape
 from .clean_data import filter_posts
-from .db_models import get_new_posts
+from .model_db import get_new_posts
