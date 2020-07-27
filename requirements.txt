@@ -3,6 +3,7 @@ beautifulsoup4==4.9.1
 certifi==2020.4.5.2
 chardet==3.0.4
 flake8==3.8.3
+helpdev==0.7.1
 idna==2.9
 importlib-metadata==1.7.0
 isort==4.3.21
@@ -13,9 +14,13 @@ pandas==1.0.4
 pycodestyle==2.6.0
 pyflakes==2.2.0
 pylint==2.5.3
+PyQt5==5.15.0
+PyQt5-sip==12.8.0
 python-craigslist==1.0.7
 python-dateutil==2.8.1
 pytz==2020.1
+QDarkStyle==2.8.1
+QtPy==1.9.0
 requests==2.23.0
 six==1.15.0
 soupsieve==2.0.1
