@@ -11,9 +11,8 @@ Base = declarative_base()
 
 
 class Post(Base):
-    """
-    DB table to store Craigslist Housing information fitting to criteria
-    """
+    """Database table to store Craigslist Housing information post filter
+    and clean."""
 
     __tablename__ = "posts"
 
@@ -30,6 +29,8 @@ class Post(Base):
 
 
 def get_new_posts(filtered_posts):
+    """Return pandas dataframe with new posts after comparison with
+    data in database. Send new posts to write to database."""
     engine = create_engine(
         "sqlite:///" + os.path.join(BASE_DIR, "craigslist_housing", "posts.db"),
         echo=False,
@@ -52,6 +53,7 @@ def get_new_posts(filtered_posts):
 
 
 def write_to_db(post, session):
+    """Get post and write to database."""
     post_db = Post(
         post_id=post.get("post_id"),
         title=post.get("title"),

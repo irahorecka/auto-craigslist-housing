@@ -1,9 +1,9 @@
 import os
 import smtplib
 import ssl
-import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import requests
 
 
 def write_email(new_posts):
@@ -60,11 +60,11 @@ class Email:
         return text_markup, html_markup
 
 
-def parse_unique_dtfm(emailObj, new_posts):
+def parse_unique_dtfm(email_obj, new_posts):
     """Retrieve relevant information from unique and new
     craigslist housing posts."""
     if new_posts.shape[0] == 0:
-        return
+        return None
 
     for _, post in new_posts.iterrows():
         location = post["location"]
@@ -75,9 +75,9 @@ def parse_unique_dtfm(emailObj, new_posts):
 
         if verify_invalid_post(url):
             continue
-        emailObj.body(location, price, bedroom, url, title)
+        email_obj.body(location, price, bedroom, url, title)
 
-    return emailObj
+    return email_obj
 
 
 def verify_invalid_post(url):

@@ -8,8 +8,8 @@ CODE_BREAK = ";n@nih;"
 
 
 def scrape(housing_category="apa", geotagged=False):
-    """Module function to appropriately scrape and write Craigslist
-    housing information using specified housing categories and filters."""
+    """Function to scrape and write Craigslist housing
+    information using specified housing categories and filters."""
     posts = query_data(housing_category, geotagged)
     if not posts:
         sys.exit(1)  # exit due to connection failure
@@ -21,7 +21,7 @@ def scrape(housing_category="apa", geotagged=False):
 
 
 def query_data(housing_category, geotag):
-    """A function to apply housing filters and instantiate
+    """Function to apply housing filters and instantiate
     craigslist.CraigslistHousing object with appropriate data."""
 
     search_filters = get_static_file.search_filters()
@@ -32,11 +32,11 @@ def query_data(housing_category, geotag):
         return mine_data(housing_object, housing_category, geotag)
     except requests.exceptions.ConnectionError:
         # PATCH THIS FOR BETTER HANDLING
-        return
+        return None
 
 
 def mine_data(housing_obj, housing_category, geotagged):
-    """A function to appropritely concatenate information sourced from
+    """Function to appropritely concatenate information sourced from
     the Craigslist housing object to a header list for downstream CSV
     export."""
 
@@ -67,4 +67,4 @@ def mine_data(housing_obj, housing_category, geotagged):
         return header
     except (AttributeError, OSError) as error:
         print(error)
-        return
+        return None
