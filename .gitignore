@@ -1,0 +1,8 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Database files
+*.db
+
+# VS Code Python environment config
+.vscode/
