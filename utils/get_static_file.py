@@ -18,3 +18,12 @@ def housing_categories():
     )
     with open(housing_categories_path) as json_path:
         return json.load(json_path)["housing_categories"]
+
+
+def qcombo_box():
+    """Get and load QComboBox categories JSON."""
+    housing_categories_path = os.path.join(
+        BASE_DIR, "static", "qcombo_box.json"
+    )
+    with open(housing_categories_path) as json_path:
+        return json.load(json_path)["qcombo_box"]
