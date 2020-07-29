@@ -75,7 +75,7 @@
      </font>
     </property>
    </widget>
-   <widget class="QLineEdit" name="min_miles">
+   <widget class="QLineEdit" name="miles">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -612,7 +612,7 @@
   <tabstop>message</tabstop>
   <tabstop>apts_housing</tabstop>
   <tabstop>rooms_shares</tabstop>
-  <tabstop>min_miles</tabstop>
+  <tabstop>miles</tabstop>
   <tabstop>zipcode</tabstop>
   <tabstop>min_price</tabstop>
   <tabstop>max_price</tabstop>
