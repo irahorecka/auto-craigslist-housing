@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
         self.price_label.setGeometry(QtCore.QRect(220, 520, 121, 16))
         self.price_label.setObjectName("price_label")
         self.gmail_label = QtWidgets.QLabel(self.centralwidget)
-        self.gmail_label.setGeometry(QtCore.QRect(80, 180, 111, 16))
+        self.gmail_label.setGeometry(QtCore.QRect(80, 180, 61, 16))
         self.gmail_label.setObjectName("gmail_label")
         self.gmail = QtWidgets.QLineEdit(self.centralwidget)
         self.gmail.setGeometry(QtCore.QRect(80, 200, 201, 21))
@@ -203,6 +203,18 @@ class Ui_MainWindow(object):
         self.cancel = QtWidgets.QPushButton(self.centralwidget)
         self.cancel.setGeometry(QtCore.QRect(390, 660, 113, 40))
         self.cancel.setObjectName("cancel")
+        self.gmail_label_warn = QtWidgets.QLabel(self.centralwidget)
+        self.gmail_label_warn.setGeometry(QtCore.QRect(210, 180, 71, 16))
+        self.gmail_label_warn.setObjectName("gmail_label_warn")
+        self.password_label_warn = QtWidgets.QLabel(self.centralwidget)
+        self.password_label_warn.setGeometry(QtCore.QRect(410, 180, 101, 16))
+        self.password_label_warn.setObjectName("password_label_warn")
+        self.send_to_label_warn = QtWidgets.QLabel(self.centralwidget)
+        self.send_to_label_warn.setGeometry(QtCore.QRect(320, 230, 191, 16))
+        self.send_to_label_warn.setObjectName("send_to_label_warn")
+        self.gmail_label_fail = QtWidgets.QLabel(self.centralwidget)
+        self.gmail_label_fail.setGeometry(QtCore.QRect(280, 640, 161, 16))
+        self.gmail_label_fail.setObjectName("gmail_label_fail")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 579, 22))
@@ -257,3 +269,27 @@ class Ui_MainWindow(object):
         self.rooms_shares.setText(_translate("MainWindow", "rooms && shares"))
         self.subscribe.setText(_translate("MainWindow", "Subscribe"))
         self.cancel.setText(_translate("MainWindow", "Cancel"))
+        self.gmail_label_warn.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p><span style=" color:#fc0107;">Enter email</span></p></body></html>',
+            )
+        )
+        self.password_label_warn.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p><span style=" color:#fc0107;">Enter password</span></p></body></html>',
+            )
+        )
+        self.send_to_label_warn.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p><span style=" color:#fc0107;">Enter email (separated by &quot;;&quot;)</span></p></body></html>',
+            )
+        )
+        self.gmail_label_fail.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p><span style=" color:#fc0107;">Invalid Gmail credentials</span></p></body></html>',
+            )
+        )
