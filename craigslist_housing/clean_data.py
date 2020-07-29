@@ -21,7 +21,7 @@ def filter_posts(posts, param):
         )
     for func in data_cleaning_funcs:
         posts = func(posts, param=param)
-
+    print(posts.price, posts.bedrooms, posts.area)
     return posts
 
 
@@ -63,8 +63,9 @@ def convert_area_to_int(dtfm, **kwargs):
 
 def get_price_range(dtfm, **kwargs):
     """Select posts within a price range."""
-    min_price = kwargs.get("min_price")
-    max_price = kwargs.get("max_price")
+    min_price = kwargs["param"].get("min_price")
+    max_price = kwargs["param"].get("max_price")
+    print(min_price, max_price)
     if not min_price and not max_price:
         return dtfm
     if not min_price:
@@ -76,8 +77,8 @@ def get_price_range(dtfm, **kwargs):
 
 def get_area_range(dtfm, **kwargs):
     """Select posts within a area (sqft) range."""
-    min_sqft = kwargs.get("min_sqft")
-    max_sqft = kwargs.get("max_sqft")
+    min_sqft = kwargs["param"].get("min_sqft")
+    max_sqft = kwargs["param"].get("max_sqft")
     if not min_sqft and not max_sqft:
         return dtfm
     if not min_sqft:
@@ -90,8 +91,9 @@ def get_area_range(dtfm, **kwargs):
 def select_bedrooms(dtfm, **kwargs):
     """Select posts within a bedrooms range."""
     dtfm = convert_bedrooms_to_int(dtfm)
-    min_bedrooms = kwargs.get("min_bedrooms")
-    max_bedrooms = kwargs.get("max_bedrooms")
+    min_bedrooms = kwargs["param"].get("min_bedrooms")
+    max_bedrooms = kwargs["param"].get("max_bedrooms")
+    print(min_bedrooms, max_bedrooms)
     if not min_bedrooms and not max_bedrooms:
         return dtfm
     if not min_bedrooms:

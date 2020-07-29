@@ -90,13 +90,13 @@ class MainPage(QMainWindow, UiMainWindow):
     def run_app(self):
         craigslist_param = {
             "housing_type": "roo",
-            "gmail_user": self.gmail,
-            "gmail_pass": self.password,
-            "email_recipient": self.send_to,  # type list
-            "email_subject": self.subject,
-            "email_message": self.message,
+            "gmail_user": self.get_text(self.gmail),
+            "gmail_pass": self.get_text(self.password),
+            "email_recipient": self.get_text(self.send_to),  # type list
+            "email_subject": self.get_text(self.subject),
+            "email_message": self.get_text(self.message),
             "miles": self.get_int(self.miles),
-            "zipcode": self.get_int(self.miles),
+            "zipcode": self.get_int(self.zipcode),
             "min_price": self.get_int(self.min_price),
             "max_price": self.get_int(self.max_price),
             "min_sqft": self.get_int(self.min_sqft),
@@ -105,10 +105,10 @@ class MainPage(QMainWindow, UiMainWindow):
         if self.apts_housing.isChecked():
             additional_param = {
                 "housing_type": "apa",
-                "min_bathrooms": self.get_int(self.min_bathrooms),
-                "max_bathrooms": self.get_int(self.max_bathrooms),
-                "min_bedrooms": self.get_int(self.min_bedrooms),
-                "max_bedrooms": self.get_int(self.max_bedrooms),
+                "min_bathrooms": self.get_qcombo_int(self.min_bathrooms),
+                "max_bathrooms": self.get_qcombo_int(self.max_bathrooms),
+                "min_bedrooms": self.get_qcombo_int(self.min_bedrooms),
+                "max_bedrooms": self.get_qcombo_int(self.max_bedrooms),
             }
             craigslist_param = {**craigslist_param, **additional_param}
 
@@ -117,13 +117,14 @@ class MainPage(QMainWindow, UiMainWindow):
             posts = craigslist_housing.scrape(
                 housing_category=craigslist_param.get("housing_type"), geotagged=False
             )
+            print(craigslist_param)
             print("hit1")
             filtered_posts = craigslist_housing.filter_posts(posts, craigslist_param)
             print("hit2")
-            new_posts = craigslist_housing.get_new_posts(filtered_posts)
-            print("hit3")
-            utils.write_email(new_posts)
-            print("hit4")
+            # new_posts = craigslist_housing.get_new_posts(filtered_posts)
+            # print("hit3")
+            # utils.write_email(new_posts)
+            # print("hit4")
 
     def set_default_email(self):
         """set default gmail and password if in local environment"""
@@ -164,6 +165,17 @@ class MainPage(QMainWindow, UiMainWindow):
     def get_int(self, text):
         try:
             text = float(self.get_text(text))
+            try:
+                return int(text)
+            except ValueError:
+                return None
+        except ValueError:
+            return None
+
+    @staticmethod
+    def get_qcombo_int(text):
+        try:
+            text = float(str(text.currentText()))
             try:
                 return int(text)
             except ValueError:
