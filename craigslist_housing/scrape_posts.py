@@ -1,8 +1,7 @@
-import sys
 import requests
 from craigslist import CraigslistHousing
 import pandas as pd
-from utils import get_static_file
+import utils
 
 CODE_BREAK = ";n@nih;"
 
@@ -12,7 +11,7 @@ def scrape(housing_category="apa", geotagged=False):
     information using specified housing categories and filters."""
     posts = query_data(housing_category, geotagged)
     if not posts:
-        sys.exit(1)  # exit due to connection failure
+        return None  # catch in main.py
 
     posts = [post.split(CODE_BREAK) for post in posts]
     posts_column = posts.pop(0)
@@ -24,14 +23,13 @@ def query_data(housing_category, geotag):
     """Function to apply housing filters and instantiate
     craigslist.CraigslistHousing object with appropriate data."""
 
-    search_filters = get_static_file.search_filters()
+    search_filters = utils.search_filters()
     try:
         housing_object = CraigslistHousing(
             category=housing_category, filters=search_filters
         )
         return mine_data(housing_object, housing_category, geotag)
     except requests.exceptions.ConnectionError:
-        # PATCH THIS FOR BETTER HANDLING
         return None
 
 
@@ -52,7 +50,7 @@ def mine_data(housing_obj, housing_category, geotagged):
     try:
         header.extend(
             [
-                f"{get_static_file.housing_categories().get(housing_category)}{CODE_BREAK}"
+                f"{utils.housing_categories().get(housing_category)}{CODE_BREAK}"
                 f"{post['id']}{CODE_BREAK}{post['repost_of']}{CODE_BREAK}"
                 f"{post['name']}{CODE_BREAK}{post['url']}{CODE_BREAK}"
                 f"{post['datetime'][0:10]}{CODE_BREAK}{post['datetime'][11:]}{CODE_BREAK}"

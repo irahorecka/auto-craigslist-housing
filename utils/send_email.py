@@ -1,4 +1,3 @@
-import os
 import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
@@ -6,13 +5,21 @@ from email.mime.text import MIMEText
 import requests
 
 
-def write_email(new_posts):
+def write_email(new_posts, craigslist_param):
     """Main function to construct email sender, recipients,
     and content for new craigslist housing posts."""
-    metadata = EmailMetadata
+    metadata = EmailMetadata()
+    metadata.sender_email = craigslist_param.get("gmail_user")
+    metadata.sender_password = craigslist_param.get("gmail_pass")
+    metadata.receiver_email = craigslist_param.get("email_recipient")
+    metadata.subject = craigslist_param.get("email_subject")
+    metadata.construct_MIME()
+
     email_obj = parse_unique_dtfm(Email(), new_posts)
     try:
-        text, html = email_obj.markup()  # may return None - catch below
+        text, html = email_obj.markup(
+            craigslist_param.get("email_message")
+        )  # may return None - catch below
         if text:  # make sure no empty str returned
             send_email(metadata, text, html)
     except AttributeError:
@@ -22,14 +29,18 @@ def write_email(new_posts):
 class EmailMetadata:
     """Constructor for email metadata."""
 
-    sender_email = os.environ.get("EMAIL_USER")
-    sender_password = os.environ.get("EMAIL_PASS")
-    receiver_email = ["ira89@icloud.com"]
+    def __init__(self):
+        self.sender_email = ""
+        self.sender_password = ""
+        self.receiver_email = []
+        self.subject = ""
+        self.message = None
 
-    message = MIMEMultipart("alternative")
-    message["Subject"] = "Craigslist Housing"
-    message["From"] = sender_email
-    message["To"] = ""  # to be populated downstream
+    def construct_MIME(self):
+        self.message = MIMEMultipart("alternative")
+        self.message["Subject"] = self.subject
+        self.message["From"] = self.sender_email
+        self.message["To"] = ""  # to be populated downstream
 
 
 class Email:
@@ -43,7 +54,7 @@ class Email:
         self.text_body += f"${price} a month in {location.title()}. ({bedroom} bedroom) {title.title()} ({url})"
         self.html_body += f'${price} a month in {location.title()}. ({bedroom} bedroom)<br><a href="{url}">{title.title()}</a><br>'
 
-    def markup(self):
+    def markup(self, message):
         text_markup = f"""\
             {self.text_body}
         """
@@ -51,7 +62,10 @@ class Email:
             <html>
             <body>
                 <p>
-                {self.html_body}<br>
+                {message}
+                </p>
+                <p>
+                {self.html_body}
                 </p>
             </body>
             </html>
@@ -83,6 +97,7 @@ def parse_unique_dtfm(email_obj, new_posts):
 def verify_invalid_post(url):
     """Ensure valid craigslist post prior to sending.
     Return True if invalid."""
+    # TODO: boost with multithreading
     post = requests.get(url).content.decode("utf-8")
     invalid_flag = "This posting has been flagged for removal."
     deleted_flag = "This posting has been deleted by its author."
@@ -102,6 +117,7 @@ def send_email(metadata, text, html):
     ssl_context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl_context) as server:
         server.login(metadata.sender_email, metadata.sender_password)
+        # TODO: send email in one batch, do not accumulate or persist
         for recipient in metadata.receiver_email:
             message["To"] = recipient
             server.sendmail(metadata.sender_email, recipient, message.as_string())
