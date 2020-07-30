@@ -1,6 +1,8 @@
 import datetime
 import pandas as pd
 
+# TODO: turn off warnings
+
 
 def filter_posts(posts, param):
     """Main function to read, clean, process, and generate
@@ -21,7 +23,6 @@ def filter_posts(posts, param):
         )
     for func in data_cleaning_funcs:
         posts = func(posts, param=param)
-    print(posts.price, posts.bedrooms, posts.area)
     return posts
 
 
@@ -65,13 +66,12 @@ def get_price_range(dtfm, **kwargs):
     """Select posts within a price range."""
     min_price = kwargs["param"].get("min_price")
     max_price = kwargs["param"].get("max_price")
-    print(min_price, max_price)
     if not min_price and not max_price:
         return dtfm
     if not min_price:
-        return dtfm.loc[dtfm.price < max_price]
+        return dtfm.loc[dtfm.price <= max_price]
     if not max_price:
-        return dtfm.loc[dtfm.price > min_price]
+        return dtfm.loc[dtfm.price >= min_price]
     return dtfm.loc[dtfm.price.between(min_price, max_price, inclusive=True)]
 
 
@@ -82,9 +82,9 @@ def get_area_range(dtfm, **kwargs):
     if not min_sqft and not max_sqft:
         return dtfm
     if not min_sqft:
-        return dtfm.loc[dtfm.area < max_sqft]
+        return dtfm.loc[dtfm.area <= max_sqft]
     if not max_sqft:
-        return dtfm.loc[dtfm.area > min_sqft]
+        return dtfm.loc[dtfm.area >= min_sqft]
     return dtfm.loc[dtfm.area.between(min_sqft, max_sqft, inclusive=True)]
 
 
@@ -93,13 +93,12 @@ def select_bedrooms(dtfm, **kwargs):
     dtfm = convert_bedrooms_to_int(dtfm)
     min_bedrooms = kwargs["param"].get("min_bedrooms")
     max_bedrooms = kwargs["param"].get("max_bedrooms")
-    print(min_bedrooms, max_bedrooms)
     if not min_bedrooms and not max_bedrooms:
         return dtfm
     if not min_bedrooms:
-        return dtfm.loc[dtfm.bedrooms < max_bedrooms]
+        return dtfm.loc[dtfm.bedrooms <= max_bedrooms]
     if not max_bedrooms:
-        return dtfm.loc[dtfm.bedrooms > min_bedrooms]
+        return dtfm.loc[dtfm.bedrooms >= min_bedrooms]
     return dtfm.loc[dtfm.bedrooms.between(min_bedrooms, max_bedrooms, inclusive=True)]
 
 

@@ -34,36 +34,11 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QComboBox" name="min_bathrooms">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>490</y>
-      <width>71</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="statusTip">
-     <string/>
-    </property>
-    <property name="accessibleName">
-     <string/>
-    </property>
-    <property name="sizeAdjustPolicy">
-     <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-    </property>
-   </widget>
    <widget class="QComboBox" name="max_bedrooms">
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>550</y>
+      <y>490</y>
       <width>71</width>
       <height>26</height>
      </rect>
@@ -130,7 +105,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>530</y>
+      <y>470</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -139,10 +114,10 @@
      <string>BEDROOMS</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="max_bathrooms">
+   <widget class="QComboBox" name="min_bedrooms">
     <property name="geometry">
      <rect>
-      <x>450</x>
+      <x>370</x>
       <y>490</y>
       <width>71</width>
       <height>26</height>
@@ -153,41 +128,6 @@
       <weight>50</weight>
       <bold>false</bold>
      </font>
-    </property>
-    <property name="statusTip">
-     <string/>
-    </property>
-    <property name="accessibleName">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="min_bedrooms">
-    <property name="geometry">
-     <rect>
-      <x>370</x>
-      <y>550</y>
-      <width>71</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-   </widget>
-   <widget class="QLabel" name="bathrooms_label">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>470</y>
-      <width>91</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>BATHROOMS</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="min_price">
@@ -345,12 +285,12 @@
      <rect>
       <x>80</x>
       <y>230</y>
-      <width>41</width>
+      <width>201</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>To:</string>
+     <string>To:  (separate emails with &quot;;&quot;)</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="send_to">
@@ -578,12 +518,12 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#fc0107;&quot;&gt;Enter email (separated by &amp;quot;;&amp;quot;)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="gmail_label_fail">
+   <widget class="QLabel" name="general_label_fail">
     <property name="geometry">
      <rect>
       <x>280</x>
       <y>640</y>
-      <width>161</width>
+      <width>221</width>
       <height>16</height>
      </rect>
     </property>
@@ -618,8 +558,6 @@
   <tabstop>max_price</tabstop>
   <tabstop>min_sqft</tabstop>
   <tabstop>max_sqft</tabstop>
-  <tabstop>min_bathrooms</tabstop>
-  <tabstop>max_bathrooms</tabstop>
   <tabstop>min_bedrooms</tabstop>
   <tabstop>max_bedrooms</tabstop>
   <tabstop>subscribe</tabstop>

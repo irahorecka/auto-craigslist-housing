@@ -1,4 +1,3 @@
-import sys
 import requests
 from craigslist import CraigslistHousing
 import pandas as pd
@@ -12,7 +11,7 @@ def scrape(housing_category="apa", geotagged=False):
     information using specified housing categories and filters."""
     posts = query_data(housing_category, geotagged)
     if not posts:
-        sys.exit(1)  # exit due to connection failure
+        return None  # catch in main.py
 
     posts = [post.split(CODE_BREAK) for post in posts]
     posts_column = posts.pop(0)
@@ -31,7 +30,6 @@ def query_data(housing_category, geotag):
         )
         return mine_data(housing_object, housing_category, geotag)
     except requests.exceptions.ConnectionError:
-        # PATCH THIS FOR BETTER HANDLING
         return None
 
 

@@ -2,12 +2,8 @@ import os
 import smtplib
 import ssl
 import sys
-import time
 from socket import gaierror
-import qdarkstyle
-from PyQt5.QtCore import QThread, QPersistentModelIndex, pyqtSignal
-from PyQt5 import QtGui, QtCore, QtWidgets
-from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow
 import craigslist_housing
 from ui import UiMainWindow
 import utils
@@ -26,12 +22,10 @@ class MainPage(QMainWindow, UiMainWindow):
 
         # CRAIGSLIST PARAMETERS
         self.apts_housing.setChecked(True)
-        self.apts_housing.clicked.connect(self.show_bathrooms_bedrooms)
-        self.rooms_shares.clicked.connect(self.hide_bathrooms_bedrooms)
+        self.apts_housing.clicked.connect(self.show_bedrooms)
+        self.rooms_shares.clicked.connect(self.hide_bedrooms)
         # Set items for QComboBox
         qcombo_box = utils.qcombo_box()
-        self.min_bathrooms.addItems(qcombo_box.get("min_bathrooms"))
-        self.max_bathrooms.addItems(qcombo_box.get("max_bathrooms"))
         self.min_bedrooms.addItems(qcombo_box.get("min_bedrooms"))
         self.max_bedrooms.addItems(qcombo_box.get("max_bedrooms"))
 
@@ -50,7 +44,6 @@ class MainPage(QMainWindow, UiMainWindow):
             ]
         ]
         if all(validation):
-            print("yerrrt")  # works
             self.run_app()
 
     def validate_sender(self):
@@ -81,9 +74,9 @@ class MainPage(QMainWindow, UiMainWindow):
             smtplib.SMTPAuthenticationError,
             TypeError,
         ):  # TypeError -- empty credentials
-            self.show_gmail_failure("Invalid Gmail credentials")
+            self.show_general_failure("Invalid Gmail credentials")
         except gaierror:
-            self.show_gmail_failure("No internet connection")
+            self.show_general_failure("No internet connection")
 
         return False
 
@@ -92,9 +85,11 @@ class MainPage(QMainWindow, UiMainWindow):
             "housing_type": "roo",
             "gmail_user": self.get_text(self.gmail),
             "gmail_pass": self.get_text(self.password),
-            "email_recipient": self.get_text(self.send_to),  # type list
+            "email_recipient": [
+                recip.strip(" ") for recip in self.get_text(self.send_to).split(";")
+            ],  # type list
             "email_subject": self.get_text(self.subject),
-            "email_message": self.get_text(self.message),
+            "email_message": self.get_text_box(self.message),  # get text from QTextBox
             "miles": self.get_int(self.miles),
             "zipcode": self.get_int(self.zipcode),
             "min_price": self.get_int(self.min_price),
@@ -105,26 +100,23 @@ class MainPage(QMainWindow, UiMainWindow):
         if self.apts_housing.isChecked():
             additional_param = {
                 "housing_type": "apa",
-                "min_bathrooms": self.get_qcombo_int(self.min_bathrooms),
-                "max_bathrooms": self.get_qcombo_int(self.max_bathrooms),
                 "min_bedrooms": self.get_qcombo_int(self.min_bedrooms),
                 "max_bedrooms": self.get_qcombo_int(self.max_bedrooms),
             }
             craigslist_param = {**craigslist_param, **additional_param}
 
         if all(craigslist_param[param] for param in ["miles", "zipcode"]):
-            # utils.set_mile_and_zipcode(craigslist_param)
+            utils.set_miles_and_zipcode(craigslist_param)
+
             posts = craigslist_housing.scrape(
                 housing_category=craigslist_param.get("housing_type"), geotagged=False
             )
-            print(craigslist_param)
-            print("hit1")
+            if posts is None:
+                self.show_general_failure("Could not get posts. Try again.")
+                return
             filtered_posts = craigslist_housing.filter_posts(posts, craigslist_param)
-            print("hit2")
-            # new_posts = craigslist_housing.get_new_posts(filtered_posts)
-            # print("hit3")
-            # utils.write_email(new_posts)
-            # print("hit4")
+            new_posts = craigslist_housing.get_new_posts(filtered_posts)
+            utils.write_email(new_posts, craigslist_param)
 
     def set_default_email(self):
         """set default gmail and password if in local environment"""
@@ -135,32 +127,26 @@ class MainPage(QMainWindow, UiMainWindow):
         if password:
             self.password.setText(password)
 
-    def hide_bathrooms_bedrooms(self):
-        self.bathrooms_label.hide()
+    def hide_bedrooms(self):
         self.bedrooms_label.hide()
-        self.min_bathrooms.hide()
-        self.max_bathrooms.hide()
         self.min_bedrooms.hide()
         self.max_bedrooms.hide()
 
-    def show_bathrooms_bedrooms(self):
-        self.bathrooms_label.show()
+    def show_bedrooms(self):
         self.bedrooms_label.show()
-        self.min_bathrooms.show()
-        self.max_bathrooms.show()
         self.min_bedrooms.show()
         self.max_bedrooms.show()
 
     def hide_warning_labels(self):
         self.gmail_label_warn.hide()
-        self.gmail_label_fail.hide()
+        self.general_label_fail.hide()
         self.password_label_warn.hide()
         self.send_to_label_warn.hide()
 
-    def show_gmail_failure(self, message):
-        self.gmail_label_fail.setText(message)
-        self.gmail_label_fail.setStyleSheet("color:#fc0107;")
-        self.gmail_label_fail.show()
+    def show_general_failure(self, message):
+        self.general_label_fail.setText(message)
+        self.general_label_fail.setStyleSheet("color:#fc0107;")
+        self.general_label_fail.show()
 
     def get_int(self, text):
         try:
@@ -175,13 +161,16 @@ class MainPage(QMainWindow, UiMainWindow):
     @staticmethod
     def get_qcombo_int(text):
         try:
-            text = float(str(text.currentText()))
-            try:
-                return int(text)
-            except ValueError:
-                return None
+            return int(str(text.currentText()))
         except ValueError:
             return None
+
+    @staticmethod
+    def get_text_box(text):
+        try:
+            return text.toPlainText()
+        except AttributeError:
+            return ""
 
     @staticmethod
     def get_text(text):
