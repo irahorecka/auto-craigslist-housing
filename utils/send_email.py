@@ -37,6 +37,7 @@ class EmailMetadata:
         self.message = None
 
     def construct_MIME(self):
+        """Construct MIMEMultipart object."""
         self.message = MIMEMultipart("alternative")
         self.message["Subject"] = self.subject
         self.message["From"] = self.sender_email
@@ -51,10 +52,13 @@ class Email:
         self.html_body = ""
 
     def body(self, location, price, bedroom, url, title):
+        """Append post information to string template (text and html)."""
         self.text_body += f"${price} a month in {location.title()}. ({bedroom} bedroom) {title.title()} ({url})"
         self.html_body += f'${price} a month in {location.title()}. ({bedroom} bedroom)<br><a href="{url}">{title.title()}</a><br>'
 
     def markup(self, message):
+        """Concatenate self.text_body and self.html_body in
+        markup format for email."""
         text_markup = f"""\
             {self.text_body}
         """
