@@ -88,6 +88,7 @@ class MainPage(QMainWindow, UiMainWindow):
 
         return False
 
+    # TODO: Run below task on QThread
     def run_app(self):
         """Process frontend information to be parsed by backend.
         Send information as dictionary object."""
