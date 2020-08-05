@@ -188,9 +188,9 @@ class Ui_MainWindow(object):
         self.send_to_label_warn = QtWidgets.QLabel(self.centralwidget)
         self.send_to_label_warn.setGeometry(QtCore.QRect(320, 230, 191, 16))
         self.send_to_label_warn.setObjectName("send_to_label_warn")
-        self.general_label_fail = QtWidgets.QLabel(self.centralwidget)
-        self.general_label_fail.setGeometry(QtCore.QRect(280, 640, 221, 16))
-        self.general_label_fail.setObjectName("general_label_fail")
+        self.general_label = QtWidgets.QLabel(self.centralwidget)
+        self.general_label.setGeometry(QtCore.QRect(280, 640, 221, 16))
+        self.general_label.setObjectName("general_label")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 579, 22))
@@ -262,7 +262,7 @@ class Ui_MainWindow(object):
                 '<html><head/><body><p><span style=" color:#fc0107;">Enter email (separated by &quot;;&quot;)</span></p></body></html>',
             )
         )
-        self.general_label_fail.setText(
+        self.general_label.setText(
             _translate(
                 "MainWindow",
                 '<html><head/><body><p><span style=" color:#fc0107;">Invalid Gmail credentials</span></p></body></html>',

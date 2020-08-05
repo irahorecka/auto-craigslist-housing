@@ -6,3 +6,6 @@ __pycache__/
 
 # VS Code Python environment config
 .vscode/
+
+# JSON file containing zipcode information
+./static/search_filters.json/

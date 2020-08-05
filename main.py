@@ -3,6 +3,10 @@ import smtplib
 import ssl
 import sys
 from socket import gaierror
+
+from numpy.lib.arraysetops import isin
+from utils.get_static_file import search_filters
+from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow
 import craigslist_housing
 from ui import UiMainWindow
@@ -82,9 +86,9 @@ class MainPage(QMainWindow, UiMainWindow):
             smtplib.SMTPAuthenticationError,
             TypeError,
         ):  # TypeError -- empty credentials
-            self.show_general_failure("Invalid Gmail credentials")
+            self.show_general_message("Invalid Gmail credentials")
         except gaierror:
-            self.show_general_failure("No internet connection")
+            self.show_general_message("No internet connection")
 
         return False
 
@@ -121,15 +125,11 @@ class MainPage(QMainWindow, UiMainWindow):
         if all(craigslist_param[param] for param in ["miles", "zipcode"]):
             utils.set_miles_and_zipcode(craigslist_param)
 
-            posts = craigslist_housing.scrape(
-                housing_category=craigslist_param.get("housing_type"), geotagged=False
-            )
-            if posts is None:
-                self.show_general_failure("Could not get posts. Try again.")
-                return
-            filtered_posts = craigslist_housing.filter_posts(posts, craigslist_param)
-            new_posts = craigslist_housing.get_new_posts(filtered_posts)
-            utils.write_email(new_posts, craigslist_param)
+            self.subscribe.setEnabled(False)
+            self.show_general_message("Loading...", failure=False)
+            self.load_results = LoadingResults(craigslist_param)
+            self.load_results.loadFinished.connect(self.show_general_message)
+            self.load_results.start()
 
     def set_default_email(self):
         """set default gmail and password if in local environment"""
@@ -155,16 +155,22 @@ class MainPage(QMainWindow, UiMainWindow):
     def hide_warning_labels(self):
         """Hide all warning labels."""
         self.gmail_label_warn.hide()
-        self.general_label_fail.hide()
+        self.general_label.hide()
         self.password_label_warn.hide()
         self.send_to_label_warn.hide()
 
-    def show_general_failure(self, message):
+    def show_general_message(self, message, failure=True):
         """Show general failure message above Submit button.
         Error message will be message param."""
-        self.general_label_fail.setText(message)
-        self.general_label_fail.setStyleSheet("color:#fc0107;")
-        self.general_label_fail.show()
+        if isinstance(message, tuple):
+            message = "".join(message)
+            self.subscribe.setEnabled(True)
+        self.general_label.setText(message)
+        if failure:
+            self.general_label.setStyleSheet("color:#fc0107;")
+        else:
+            self.general_label.setStyleSheet("color:#000000;")
+        self.general_label.show()
 
     def get_int(self, text):
         """Get integer from string."""
@@ -208,6 +214,39 @@ class MainPage(QMainWindow, UiMainWindow):
             return bool(text.text())
         except AttributeError:
             return False
+
+
+class LoadingResults(QThread):
+    # TODO : Hide exception thrown by sqlite3 for termination of thread.
+    """Load results when subscribe button is clicked."""
+
+    loadFinished = pyqtSignal(tuple, bool)
+
+    def __init__(self, search_param, parent=None):
+        QThread.__init__(self, parent)
+        self.search_param = search_param
+        self.load_failed = False
+        self.message = "Load complete."
+
+    def run(self):
+        try:
+            posts = craigslist_housing.scrape(
+                housing_category=self.search_param.get("housing_type"), geotagged=False
+            )
+            if posts is None:
+                self.show_general_message("Could not get posts. Try again.")
+                return
+            filtered_posts = craigslist_housing.filter_posts(posts, self.search_param)
+            new_posts = craigslist_housing.get_new_posts(filtered_posts)
+            utils.write_email(new_posts, self.search_param)
+        except Exception as e:  # poor error catching -- amend later
+            print(e)
+            self.load_failed = True
+            self.message = "Load failed."
+
+        self.loadFinished.emit(
+            tuple(self.message), self.load_failed
+        )  # cannot emit str?
 
 
 if __name__ == "__main__":

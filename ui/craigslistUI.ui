@@ -518,7 +518,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#fc0107;&quot;&gt;Enter email (separated by &amp;quot;;&amp;quot;)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="general_label_fail">
+   <widget class="QLabel" name="general_label">
     <property name="geometry">
      <rect>
       <x>280</x>
