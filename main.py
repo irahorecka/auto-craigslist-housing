@@ -6,8 +6,16 @@ from socket import gaierror
 
 from numpy.lib.arraysetops import isin
 from utils.get_static_file import search_filters
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtWidgets import (
+    QApplication,
+    QMainWindow,
+    QMessageBox,
+    QPushButton,
+    QWidget,
+    QLabel,
+    QListWidgetItem,
+)
 import craigslist_housing
 from ui import UiMainWindow
 import utils
@@ -23,6 +31,8 @@ class MainPage(QMainWindow, UiMainWindow):
         # DEFAULT PARAMETERS
         self.set_default_email()
         self.hide_warning_labels()
+
+        self.buildExamplePopup()
 
         # CRAIGSLIST PARAMETERS
         self.apts_housing.setChecked(True)
@@ -92,7 +102,6 @@ class MainPage(QMainWindow, UiMainWindow):
 
         return False
 
-    # TODO: Run below task on QThread
     def run_app(self):
         """Process frontend information to be parsed by backend.
         Send information as dictionary object."""
@@ -183,6 +192,29 @@ class MainPage(QMainWindow, UiMainWindow):
         except ValueError:
             return None
 
+    @pyqtSlot(QListWidgetItem)
+    def buildExamplePopup(self):
+        self.exPopup = examplePopup(self)
+        self.exPopup.setGeometry(100, 200, 100, 100)
+        self.exPopup.show()
+
+    # @staticmethod
+    # def subscribe_popup():
+    #     """Get user to select recurring subscription."""
+    #     msg = QMessageBox()
+    #     msg.setWindowTitle("Subscription")
+    #     msg.setText("Input recurring hours for Craigslist notifications.\nPress cancel to exit.")
+    #     msg.addButton(QPushButton("Subscribe"), QMessageBox.YesRole)
+    #     msg.addButton(QPushButton("Cancel"), QMessageBox.NoRole)
+    #     msg.setText('to select click "show details"')
+    #     msg.setTextInteractionFlags(Qt.NoTextInteraction) # (QtCore.Qt.TextSelectableByMouse)
+    #     msg.setDetailedText('line 1\nline 2\nline 3')
+    #     # TODO: enable closing feature on window close button
+    #     upload_type_bool = msg.exec_()
+    #     if not upload_type_bool:
+    #         return True
+    #     return False, 0
+
     @staticmethod
     def get_qcombo_int(text):
         """Get text from QComboBox object."""
@@ -214,6 +246,13 @@ class MainPage(QMainWindow, UiMainWindow):
             return bool(text.text())
         except AttributeError:
             return False
+
+
+class examplePopup(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.name = "Test"
+        self.label = QLabel("Woohoo", self)
 
 
 class LoadingResults(QThread):
@@ -252,6 +291,5 @@ class LoadingResults(QThread):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = MainPage()
-    # app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     widget.show()
     sys.exit(app.exec_())
