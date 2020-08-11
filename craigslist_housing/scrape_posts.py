@@ -1,5 +1,11 @@
+import sys
 import requests
-from craigslist import CraigslistHousing
+
+try:
+    from craigslist import CraigslistHousing
+except requests.exceptions.ConnectionError:
+    print("Connection error encountered... Try again.")
+    sys.exit(1)
 import pandas as pd
 import utils
 

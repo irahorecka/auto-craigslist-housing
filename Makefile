@@ -11,3 +11,4 @@ pylint:
 
 app:
 	pyuic5 ./ui/craigslistUI.ui -o ./ui/craigslistUI.py
+	pyuic5 ./ui/subscriptionUI.ui -o ./ui/subscriptionUI_test.py

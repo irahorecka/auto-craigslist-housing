@@ -2,22 +2,12 @@ import os
 import smtplib
 import ssl
 import sys
+import time
 from socket import gaierror
-
-from numpy.lib.arraysetops import isin
-from utils.get_static_file import search_filters
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QMessageBox,
-    QPushButton,
-    QWidget,
-    QLabel,
-    QListWidgetItem,
-)
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 import craigslist_housing
-from ui import UiMainWindow
+from ui import UiMainWindow, UiDialog
 import utils
 
 
@@ -32,8 +22,6 @@ class MainPage(QMainWindow, UiMainWindow):
         self.set_default_email()
         self.hide_warning_labels()
 
-        self.buildExamplePopup()
-
         # CRAIGSLIST PARAMETERS
         self.apts_housing.setChecked(True)
         self.apts_housing.clicked.connect(self.show_bedrooms)
@@ -45,8 +33,10 @@ class MainPage(QMainWindow, UiMainWindow):
 
         # SUBSCRIBE / CANCEL
         self.subscribe.clicked.connect(self.hide_warning_labels)
-        self.subscribe.clicked.connect(self.submit_form)
-        self.cancel.clicked.connect(self.close)
+        self.subscribe.clicked.connect(self.open_dialog)
+        x = self.subscribe.clicked.connect(self.submit_form)
+        # self.cancel.clicked.connect(self.close)
+        # self.cancel.clicked.connect(self.open_dialog)
 
     def submit_form(self):
         """Submit application form (email and housing info)
@@ -60,7 +50,9 @@ class MainPage(QMainWindow, UiMainWindow):
             ]
         ]
         if all(validation):
-            self.run_app()
+            while True:
+                self.run_app()
+                time.sleep(self.hours * 3600)
 
     def validate_sender(self):
         """Validate Gmail account and password (run 1) by
@@ -140,6 +132,13 @@ class MainPage(QMainWindow, UiMainWindow):
             self.load_results.loadFinished.connect(self.show_general_message)
             self.load_results.start()
 
+    def open_dialog(self):
+        dialog = QDialog()
+        dialog.ui = UiDialog()
+        dialog.ui.setupUi(dialog)
+        dialog.setAttribute(Qt.WA_DeleteOnClose)
+        dialog.exec_()
+
     def set_default_email(self):
         """set default gmail and password if in local environment"""
         gmail = os.environ.get("EMAIL_USER")
@@ -192,29 +191,6 @@ class MainPage(QMainWindow, UiMainWindow):
         except ValueError:
             return None
 
-    @pyqtSlot(QListWidgetItem)
-    def buildExamplePopup(self):
-        self.exPopup = examplePopup(self)
-        self.exPopup.setGeometry(100, 200, 100, 100)
-        self.exPopup.show()
-
-    # @staticmethod
-    # def subscribe_popup():
-    #     """Get user to select recurring subscription."""
-    #     msg = QMessageBox()
-    #     msg.setWindowTitle("Subscription")
-    #     msg.setText("Input recurring hours for Craigslist notifications.\nPress cancel to exit.")
-    #     msg.addButton(QPushButton("Subscribe"), QMessageBox.YesRole)
-    #     msg.addButton(QPushButton("Cancel"), QMessageBox.NoRole)
-    #     msg.setText('to select click "show details"')
-    #     msg.setTextInteractionFlags(Qt.NoTextInteraction) # (QtCore.Qt.TextSelectableByMouse)
-    #     msg.setDetailedText('line 1\nline 2\nline 3')
-    #     # TODO: enable closing feature on window close button
-    #     upload_type_bool = msg.exec_()
-    #     if not upload_type_bool:
-    #         return True
-    #     return False, 0
-
     @staticmethod
     def get_qcombo_int(text):
         """Get text from QComboBox object."""
@@ -246,13 +222,6 @@ class MainPage(QMainWindow, UiMainWindow):
             return bool(text.text())
         except AttributeError:
             return False
-
-
-class examplePopup(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.name = "Test"
-        self.label = QLabel("Woohoo", self)
 
 
 class LoadingResults(QThread):
