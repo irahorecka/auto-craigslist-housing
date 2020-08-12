@@ -92,19 +92,6 @@
     <bool>false</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="go">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>300</y>
-     <width>113</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Go!</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="subscription_label">
    <property name="geometry">
     <rect>
@@ -128,6 +115,19 @@
    </property>
    <property name="scaledContents">
     <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="go">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>310</y>
+     <width>113</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Go</string>
    </property>
   </widget>
  </widget>
