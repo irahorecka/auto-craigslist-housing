@@ -51,7 +51,7 @@ def rm_repost(dtfm, **kwargs):
 
 def convert_price_to_int(dtfm, **kwargs):
     """Convert price values to integers."""
-    dtfm.price = dtfm.price.str.replace("$", "").replace(",", "").astype("int")
+    dtfm.price = dtfm.price.str.replace("$", "").str.replace(",", "").astype("int")
     return dtfm
 
 
