@@ -34,9 +34,8 @@ class MainPage(QMainWindow, UiMainWindow):
         # SUBSCRIBE / CANCEL
         self.subscribe.clicked.connect(self.hide_warning_labels)
         self.subscribe.clicked.connect(self.open_dialog)
-        x = self.subscribe.clicked.connect(self.submit_form)
-        # self.cancel.clicked.connect(self.close)
-        # self.cancel.clicked.connect(self.open_dialog)
+        self.subscribe.clicked.connect(self.submit_form)
+        self.cancel.clicked.connect(self.close)
 
     def submit_form(self):
         """Submit application form (email and housing info)
@@ -50,9 +49,12 @@ class MainPage(QMainWindow, UiMainWindow):
             ]
         ]
         if all(validation):
-            while True:
-                self.run_app()
-                time.sleep(self.hours * 3600)
+            # while True:
+            #     t0 = time.time()
+            self.run_app()
+            # t1 = time.time()
+            # print(f"Sleeping for {self.hours} hours...")
+            # time.sleep((self.hours * 3600) - (t1 - t0))
 
     def validate_sender(self):
         """Validate Gmail account and password (run 1) by
@@ -133,11 +135,9 @@ class MainPage(QMainWindow, UiMainWindow):
             self.load_results.start()
 
     def open_dialog(self):
-        dialog = QDialog()
-        dialog.ui = UiDialog()
-        dialog.ui.setupUi(dialog)
-        dialog.setAttribute(Qt.WA_DeleteOnClose)
-        dialog.exec_()
+        dialog = Dialog()
+        if dialog.exec_():
+            self.hours = dialog.hour_selected
 
     def set_default_email(self):
         """set default gmail and password if in local environment"""
@@ -224,6 +224,20 @@ class MainPage(QMainWindow, UiMainWindow):
             return False
 
 
+class Dialog(QDialog, UiDialog):
+    qcombo_box = utils.qcombo_box()
+
+    def __init__(self, parent=None):
+        QDialog.__init__(self, parent)
+        self.setupUi(self)
+        self.hours.addItems(self.qcombo_box.get("hours"))
+        self.go.clicked.connect(self.register_hours)
+
+    def register_hours(self):
+        self.hour_selected = MainPage.get_qcombo_int(self.hours)
+        self.accept()
+
+
 class LoadingResults(QThread):
     # TODO : Hide exception thrown by sqlite3 for termination of thread.
     """Load results when subscribe button is clicked."""
@@ -237,20 +251,20 @@ class LoadingResults(QThread):
         self.message = "Load complete."
 
     def run(self):
-        try:
-            posts = craigslist_housing.scrape(
-                housing_category=self.search_param.get("housing_type"), geotagged=False
-            )
-            if posts is None:
-                self.show_general_message("Could not get posts. Try again.")
-                return
-            filtered_posts = craigslist_housing.filter_posts(posts, self.search_param)
-            new_posts = craigslist_housing.get_new_posts(filtered_posts)
-            utils.write_email(new_posts, self.search_param)
-        except Exception as e:  # poor error catching -- amend later
-            print(e)
-            self.load_failed = True
-            self.message = "Load failed."
+        # try:
+        posts = craigslist_housing.scrape(
+            housing_category=self.search_param.get("housing_type"), geotagged=False
+        )
+        if posts is None:
+            self.show_general_message("Could not get posts. Try again.")
+            return
+        filtered_posts = craigslist_housing.filter_posts(posts, self.search_param)
+        new_posts = craigslist_housing.get_new_posts(filtered_posts)
+        utils.write_email(new_posts, self.search_param)
+        # except Exception as e:  # poor error catching -- amend later
+        #     print(e)
+        #     self.load_failed = True
+        #     self.message = "Load failed."
 
         self.loadFinished.emit(
             tuple(self.message), self.load_failed
