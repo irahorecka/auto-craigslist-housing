@@ -32,7 +32,9 @@ def get_new_posts(filtered_posts):
     """Return pandas dataframe with new posts after comparison with
     data in database. Send new posts to write to database."""
     engine = create_engine(
-        "sqlite:///" + os.path.join(BASE_DIR, "craigslist_housing", "posts.db"),
+        "sqlite:///"
+        + os.path.join(BASE_DIR, "craigslist_housing", "posts.db")
+        + "?check_same_thread=False",
         echo=False,
     )
     Base.metadata.create_all(engine)

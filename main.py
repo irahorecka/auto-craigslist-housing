@@ -4,11 +4,13 @@ import ssl
 import sys
 import time
 from socket import gaierror
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 import craigslist_housing
 from ui import UiMainWindow, UiDialog
 import utils
+
+# TODO: check qualifying parameters for UI prior to showing subscription dialog
 
 
 class MainPage(QMainWindow, UiMainWindow):
@@ -49,12 +51,7 @@ class MainPage(QMainWindow, UiMainWindow):
             ]
         ]
         if all(validation):
-            # while True:
-            #     t0 = time.time()
             self.run_app()
-            # t1 = time.time()
-            # print(f"Sleeping for {self.hours} hours...")
-            # time.sleep((self.hours * 3600) - (t1 - t0))
 
     def validate_sender(self):
         """Validate Gmail account and password (run 1) by
@@ -129,8 +126,7 @@ class MainPage(QMainWindow, UiMainWindow):
             utils.set_miles_and_zipcode(craigslist_param)
 
             self.subscribe.setEnabled(False)
-            self.show_general_message("Loading...", failure=False)
-            self.load_results = LoadingResults(craigslist_param)
+            self.load_results = LoadingResults(craigslist_param, self.hours)
             self.load_results.loadFinished.connect(self.show_general_message)
             self.load_results.start()
 
@@ -239,36 +235,36 @@ class Dialog(QDialog, UiDialog):
 
 
 class LoadingResults(QThread):
-    # TODO : Hide exception thrown by sqlite3 for termination of thread.
     """Load results when subscribe button is clicked."""
 
     loadFinished = pyqtSignal(tuple, bool)
 
-    def __init__(self, search_param, parent=None):
+    def __init__(self, search_param, hours_sleep, parent=None):
         QThread.__init__(self, parent)
         self.search_param = search_param
+        self.hours = hours_sleep if hours_sleep else 0
         self.load_failed = False
         self.message = "Load complete."
 
     def run(self):
-        # try:
-        posts = craigslist_housing.scrape(
-            housing_category=self.search_param.get("housing_type"), geotagged=False
-        )
-        if posts is None:
-            self.show_general_message("Could not get posts. Try again.")
-            return
-        filtered_posts = craigslist_housing.filter_posts(posts, self.search_param)
-        new_posts = craigslist_housing.get_new_posts(filtered_posts)
-        utils.write_email(new_posts, self.search_param)
-        # except Exception as e:  # poor error catching -- amend later
-        #     print(e)
-        #     self.load_failed = True
-        #     self.message = "Load failed."
+        while True:
+            time0 = time.time()
+            self.loadFinished.emit(tuple("Loading..."), self.load_failed)
 
-        self.loadFinished.emit(
-            tuple(self.message), self.load_failed
-        )  # cannot emit str?
+            posts = craigslist_housing.scrape(
+                housing_category=self.search_param.get("housing_type"), geotagged=False
+            )
+            if posts is None:
+                self.show_general_message("Could not get posts. Try again.")
+                return
+            filtered_posts = craigslist_housing.filter_posts(posts, self.search_param)
+            new_posts = craigslist_housing.get_new_posts(filtered_posts)
+            utils.write_email(new_posts, self.search_param)
+
+            self.loadFinished.emit(tuple(self.message), self.load_failed)
+            time1 = time.time()
+            print(f"Sleeping for {self.hours} hours...")
+            time.sleep((self.hours * 3600) - (time1 - time0))
 
 
 if __name__ == "__main__":
