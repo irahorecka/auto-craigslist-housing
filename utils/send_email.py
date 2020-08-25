@@ -16,7 +16,7 @@ def write_email(new_posts, craigslist_param):
     metadata.subject = craigslist_param.get("email_subject")
     metadata.construct_MIME()
 
-    email_obj = add_new_posts(Email(), new_posts)
+    email_obj = add_new_posts(Email(craigslist_param.get("housing_type")), new_posts)
     try:
         text, html = email_obj.markup(
             craigslist_param.get("email_message")
@@ -48,14 +48,19 @@ class EmailMetadata:
 class Email:
     """Construct email body from new posts."""
 
-    def __init__(self):
+    def __init__(self, housing_type):
+        self.housing_type = housing_type
         self.text_body = ""
         self.html_body = ""
 
     def body(self, location, price, bedrooms, url, title):
         """Append post information to string template (text and html)."""
-        self.text_body += f"${price} a month in {location.title()}. ({bedrooms} bedroom) {title.title()} ({url})"
-        self.html_body += f'${price} a month in {location.title()}. ({bedrooms} bedroom)<br><a href="{url}">{title.title()}</a><br>'
+        if self.housing_type == "roo":    
+            self.text_body += f"${price} a month in {location.title()}. {title.title()} ({url})"
+            self.html_body += f'${price} a month in {location.title()}.<br><a href="{url}">{title.title()}</a><br>'
+        else:
+            self.text_body += f"${price} a month in {location.title()}. ({bedrooms} bedroom) {title.title()} ({url})"
+            self.html_body += f'${price} a month in {location.title()}. ({bedrooms} bedroom)<br><a href="{url}">{title.title()}</a><br>'
 
     def markup(self, message):
         """Concatenate self.text_body and self.html_body in

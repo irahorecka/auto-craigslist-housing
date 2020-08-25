@@ -1,7 +1,6 @@
 import datetime
 import pandas as pd
-
-# TODO: turn off warnings
+pd.options.mode.chained_assignment = None
 
 
 def filter_posts(posts, param):
