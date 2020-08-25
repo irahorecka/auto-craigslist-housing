@@ -55,8 +55,10 @@ class Email:
 
     def body(self, location, price, bedrooms, url, title):
         """Append post information to string template (text and html)."""
-        if self.housing_type == "roo":    
-            self.text_body += f"${price} a month in {location.title()}. {title.title()} ({url})"
+        if self.housing_type == "roo":
+            self.text_body += (
+                f"${price} a month in {location.title()}. {title.title()} ({url})"
+            )
             self.html_body += f'${price} a month in {location.title()}.<br><a href="{url}">{title.title()}</a><br>'
         else:
             self.text_body += f"${price} a month in {location.title()}. ({bedrooms} bedroom) {title.title()} ({url})"
@@ -138,7 +140,7 @@ def send_email(metadata, text, html):
     ssl_context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl_context) as server:
         server.login(metadata.sender_email, metadata.sender_password)
-        # TODO: send email in one batch, do not accumulate or persist
+        # TODO: send email in one batch, do not accumulate or persist recipient
         for recipient in metadata.receiver_email:
             message["To"] = recipient
             server.sendmail(metadata.sender_email, recipient, message.as_string())
