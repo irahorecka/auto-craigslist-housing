@@ -11,6 +11,7 @@ from ui import UiMainWindow, UiDialog
 import utils
 
 # TODO: check qualifying parameters for UI prior to showing subscription dialog
+# TODO: check zipcode compatability in validation step
 
 
 class MainPage(QMainWindow, UiMainWindow):
@@ -51,6 +52,7 @@ class MainPage(QMainWindow, UiMainWindow):
             ]
         ]
         if all(validation):
+            self.subscribe.setEnabled(False)
             self.run_app()
 
     def validate_sender(self):
@@ -125,8 +127,10 @@ class MainPage(QMainWindow, UiMainWindow):
         if all(craigslist_param[param] for param in ["miles", "zipcode"]):
             utils.set_miles_and_zipcode(craigslist_param)
 
-            self.subscribe.setEnabled(False)
-            self.load_results = LoadingResults(craigslist_param, self.hours)
+            try:
+                self.load_results = LoadingResults(craigslist_param, self.hours)
+            except AttributeError:  # exit dialog box without selection
+                return
             self.load_results.loadFinished.connect(self.show_general_message)
             self.load_results.start()
 
@@ -262,6 +266,8 @@ class LoadingResults(QThread):
             utils.write_email(new_posts, self.search_param)
 
             self.loadFinished.emit(tuple(self.message), self.load_failed)
+            if not self.hours:
+                return
             time1 = time.time()
             print(f"Sleeping for {self.hours} hours...")
             time.sleep((self.hours * 3600) - (time1 - time0))
