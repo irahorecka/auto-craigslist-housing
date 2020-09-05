@@ -243,6 +243,9 @@ class MainPage(QMainWindow, UiMainWindow):
 
 
 class Dialog(QDialog, UiDialog):
+    """Provide subscription dialog to allow user to select elapse
+    hours prior to running another search."""
+
     qcombo_box = utils.qcombo_box()
 
     def __init__(self, parent=None):
@@ -252,6 +255,7 @@ class Dialog(QDialog, UiDialog):
         self.go.clicked.connect(self.register_hours)
 
     def register_hours(self):
+        """Get user selected hours and return to main app."""
         self.hour_selected = MainPage.get_qcombo_int(self.hours)
         self.accept()
 
