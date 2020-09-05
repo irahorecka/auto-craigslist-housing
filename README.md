@@ -2,7 +2,7 @@
 
 A project to search Craigslist and email users housing information in the SF Bay Area Peninsula.
 
-<img src="Documentation/craigslistApp.png" alt="Logo" height="200">
+<img src="Documentation/craigslist_app.png" alt="Logo" height="200">
 
 ## Purpose
 
