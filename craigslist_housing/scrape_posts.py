@@ -12,7 +12,7 @@ import utils
 CODE_BREAK = ";n@nih;"
 
 
-def scrape(housing_category="apa", geotagged=False):
+def scrape(housing_category, geotagged=False):
     """Function to scrape and write Craigslist housing
     information using specified housing categories and filters."""
     posts = query_data(housing_category, geotagged)

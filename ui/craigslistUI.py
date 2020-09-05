@@ -191,6 +191,9 @@ class Ui_MainWindow(object):
         self.general_label = QtWidgets.QLabel(self.centralwidget)
         self.general_label.setGeometry(QtCore.QRect(280, 640, 221, 16))
         self.general_label.setObjectName("general_label")
+        self.miles_zip_warn = QtWidgets.QLabel(self.centralwidget)
+        self.miles_zip_warn.setGeometry(QtCore.QRect(220, 450, 171, 16))
+        self.miles_zip_warn.setObjectName("miles_zip_warn")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 579, 22))
@@ -266,5 +269,11 @@ class Ui_MainWindow(object):
             _translate(
                 "MainWindow",
                 '<html><head/><body><p><span style=" color:#fc0107;">Invalid Gmail credentials</span></p></body></html>',
+            )
+        )
+        self.miles_zip_warn.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p><span style=" color:#fc0107;">Miles or ZIP code incorrect</span></p></body></html>',
             )
         )

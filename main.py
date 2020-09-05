@@ -10,7 +10,8 @@ import craigslist_housing
 from ui import UiMainWindow, UiDialog
 import utils
 
-# TODO: check zipcode compatability in validation step
+# TODO: add a function to purge db
+# TODO: subscribe button does not turn off when loading
 
 
 class MainPage(QMainWindow, UiMainWindow):
@@ -47,10 +48,11 @@ class MainPage(QMainWindow, UiMainWindow):
                 self.validate_sender,
                 self.validate_receiver,
                 self.validate_email_login,
+                self.validate_miles_zipcode,
             ]
         ]
         if all(validation):
-            self.subscribe.setEnabled(False)
+            self.subscribe.setEnabled(False)  # does not work - 2020-09-05
             self.open_dialog()
             self.run_app()
 
@@ -94,6 +96,22 @@ class MainPage(QMainWindow, UiMainWindow):
 
         return False
 
+    def validate_miles_zipcode(self):
+        """Validate that miles and zipcode are populated.
+        Validate zipcode is 5 digit. All negative converted
+        to abs."""
+        miles = self.get_int(self.miles)
+        zipcode = self.get_int(self.zipcode)
+        if not all((miles, zipcode)):
+            self.miles_zip_warn.show()
+            return False
+        zipcode_abs = abs(zipcode)
+        if len(str(zipcode_abs)) != 5:
+            self.miles_zip_warn.show()
+            return False
+
+        return True
+
     def run_app(self):
         """Process frontend information to be parsed by backend.
         Send information as dictionary object."""
@@ -107,8 +125,10 @@ class MainPage(QMainWindow, UiMainWindow):
             ],  # type list
             "email_subject": self.get_text(self.subject),
             "email_message": self.get_text_box(self.message),  # get text from QTextBox
-            "miles": self.get_int(self.miles),
-            "zipcode": self.get_int(self.zipcode),
+            "miles": abs(self.get_int(self.miles)),  # Nonetype check implemented above
+            "zipcode": abs(
+                self.get_int(self.zipcode)
+            ),  # Nonetype check implemented above
             "min_price": self.get_int(self.min_price),
             "max_price": self.get_int(self.max_price),
             "min_sqft": self.get_int(self.min_sqft),
@@ -123,16 +143,13 @@ class MainPage(QMainWindow, UiMainWindow):
             }
             craigslist_param = {**craigslist_param, **additional_param}
 
-        # validate zipcode and miles are populated in craigslist_param
-        if all(craigslist_param[param] for param in ["miles", "zipcode"]):
-            utils.set_miles_and_zipcode(craigslist_param)
-
-            try:
-                self.load_results = LoadingResults(craigslist_param, self.hours)
-            except AttributeError:  # exit dialog box without selection
-                return
-            self.load_results.loadFinished.connect(self.show_general_message)
-            self.load_results.start()
+        utils.set_miles_and_zipcode(craigslist_param)
+        try:
+            self.load_results = LoadingResults(craigslist_param, self.hours)
+        except AttributeError:  # exit dialog box without selection
+            return
+        self.load_results.loadFinished.connect(self.show_general_message)
+        self.load_results.start()
 
     def open_dialog(self):
         dialog = Dialog()
@@ -164,6 +181,7 @@ class MainPage(QMainWindow, UiMainWindow):
         """Hide all warning labels."""
         self.gmail_label_warn.hide()
         self.general_label.hide()
+        self.miles_zip_warn.hide()
         self.password_label_warn.hide()
         self.send_to_label_warn.hide()
 
@@ -251,13 +269,13 @@ class LoadingResults(QThread):
         self.message = "Load complete."
 
     def run(self):
+        """Run search, clean, and email of craigslist housing given
+        the parameters defined by user in UI."""
         while True:
             time0 = time.time()
             self.loadFinished.emit(tuple("Loading..."), self.load_failed)
 
-            posts = craigslist_housing.scrape(
-                housing_category=self.search_param.get("housing_type"), geotagged=False
-            )
+            posts = craigslist_housing.scrape(self.search_param.get("housing_type"))
             if posts is None:
                 self.show_general_message("Could not get posts. Try again.")
                 return
@@ -269,7 +287,6 @@ class LoadingResults(QThread):
             if not self.hours:
                 return
             time1 = time.time()
-            print(f"Sleeping for {self.hours} hours...")
             time.sleep((self.hours * 3600) - (time1 - time0))
 
 
