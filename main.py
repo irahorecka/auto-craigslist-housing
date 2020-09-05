@@ -10,7 +10,6 @@ import craigslist_housing
 from ui import UiMainWindow, UiDialog
 import utils
 
-# TODO: check qualifying parameters for UI prior to showing subscription dialog
 # TODO: check zipcode compatability in validation step
 
 
@@ -36,7 +35,6 @@ class MainPage(QMainWindow, UiMainWindow):
 
         # SUBSCRIBE / CANCEL
         self.subscribe.clicked.connect(self.hide_warning_labels)
-        self.subscribe.clicked.connect(self.open_dialog)
         self.subscribe.clicked.connect(self.submit_form)
         self.cancel.clicked.connect(self.close)
 
@@ -53,6 +51,7 @@ class MainPage(QMainWindow, UiMainWindow):
         ]
         if all(validation):
             self.subscribe.setEnabled(False)
+            self.open_dialog()
             self.run_app()
 
     def validate_sender(self):
@@ -103,7 +102,8 @@ class MainPage(QMainWindow, UiMainWindow):
             "gmail_user": self.get_text(self.gmail),
             "gmail_pass": self.get_text(self.password),
             "email_recipient": [
-                recip.strip(" ") for recip in self.get_text(self.send_to).split(";")
+                recipient.strip(" ")
+                for recipient in self.get_text(self.send_to).split(";")
             ],  # type list
             "email_subject": self.get_text(self.subject),
             "email_message": self.get_text_box(self.message),  # get text from QTextBox
