@@ -1,12 +1,12 @@
 # autoCraigslistHousing
 
-A project to search Craigslist and email users housing information in the SF Bay Area Peninsula.
+An application to search, subscribe to, and email Craigslist Housing posts.
 
 <img src="Documentation/craigslist_app.png" alt="Logo" height="200">
 
 ## Purpose
 
-My partner and I were planning to move to the Peninsula from Berkeley in August 2020. Rather than constantly combing through Craigslist Housing for new posts, I decided to have some fun and write an app that emails me new housing posts that meet the location and desired specifications. I've since refactored and made better of this code. Hopefully it will be of use to whomever uses it.<br>
+My partner and I were planning to move to the Bay Area in August 2020. Rather than constantly combing through Craigslist Housing for new posts, I decided to have some fun and write an app that emails me new housing posts that meet the location and desired specifications. I've since refactored and made better of this code. Hopefully it will be of use to whomever uses it.<br>
 
 View the video <a href="https://i.imgur.com/4D2D3Tz.mp4">demo</a>.
 
