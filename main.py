@@ -52,7 +52,7 @@ class MainPage(QMainWindow, UiMainWindow):
             ]
         ]
         if all(validation):
-            self.subscribe.setEnabled(False)  # does not work - 2020-09-05
+            # self.subscribe.setEnabled(False)  # does not work - 2020-09-05
             self.open_dialog()
             self.run_app()
 
