@@ -6,7 +6,9 @@ A project to search Craigslist and email users housing information in the SF Bay
 
 ## Purpose
 
-My partner and I were planning to move to the Peninsula from Berkeley in August 2020. Rather than constantly combing through Craigslist Housing for new posts, I decided to have some fun and write an app that emails me new housing posts that meet the location and desired specifications. I've since refactored and made better of this code. Hopefully it will be of use to whomever uses it.
+My partner and I were planning to move to the Peninsula from Berkeley in August 2020. Rather than constantly combing through Craigslist Housing for new posts, I decided to have some fun and write an app that emails me new housing posts that meet the location and desired specifications. I've since refactored and made better of this code. Hopefully it will be of use to whomever uses it.<br>
+
+View the video <a href="https://i.imgur.com/4D2D3Tz.mp4">demo</a>.
 
 ## Running the app
 
