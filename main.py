@@ -11,7 +11,6 @@ from ui import UiMainWindow, UiDialog
 import utils
 
 # TODO: add a function to purge db
-# TODO: subscribe button does not turn off when loading
 
 
 class MainPage(QMainWindow, UiMainWindow):
