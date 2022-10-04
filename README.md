@@ -1,4 +1,4 @@
-# autoCraigslistHousing
+# auto-craigslist-housing
 
 An application to search, subscribe to, and email Craigslist Housing posts.
 
@@ -40,4 +40,4 @@ To have Gmail and Password autopopulated, store your Gmail account and password 
 
 ## Issues
 
-Please submit any questions or issues <a href="https://github.com/irahorecka/autoCraigslistHousing/issues">here</a>.
+Please submit any questions or issues <a href="https://github.com/irahorecka/auto-craigslist-housing/issues">here</a>.
