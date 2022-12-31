@@ -2,7 +2,7 @@
 
 An application to search, subscribe to, and email Craigslist Housing posts.
 
-<img src="Documentation/craigslist_app.png" alt="Logo" height="200">
+<img src="docs/craigslist_app.png" alt="Logo" height="200">
 
 ## Purpose
 
