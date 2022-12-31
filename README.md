@@ -24,13 +24,13 @@ There are two windows in this application: main parameter window and subscriptio
 
 In the main window, you will complete the Email form by completing the Email recipients along with a subject and message body, if desired. You may choose either apartments & housing or rooms & shares. The search distance criteria is set on miles from ZIP code. Select price range, area range (ft<sup>2</sup>), and number of bedrooms, if desired.<br>NOTE: bedrooms are not available for rooms and shares.<br><br>
 
-<img src="Documentation/main_app.png" alt="Main" width="800"><br><br>
+<img src="docs/main_app.png" alt="Main" width="800"><br><br>
 
 ### Subscription window
 
 Once you click "Subscribe" in the main application, a series of checks will be conducted to ensure that your input credentials are appropriate. If passed, a subscription window will pop up, asking you if you would like to receive continuous notifications (updates) on new Cragislist posts given the input parameters. If a numeric value from the drop-down menu is selected, the user will receive updates (if there are new posts) once every given hour. If "None" is selected, the user will receive the one-time notification.<br><br>
 
-<img src="Documentation/dialog_app.png" alt="Main" width="800"><br><br>
+<img src="docs/dialog_app.png" alt="Main" width="800"><br><br>
 
 ## Important configuration notes
 
