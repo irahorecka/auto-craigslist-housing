@@ -13,7 +13,7 @@ numpy==1.22.0
 pandas==1.0.4
 pycodestyle==2.6.0
 pyflakes==2.2.0
-pylint==2.5.3
+pylint==4.0.9
 PyQt5==5.15.0
 PyQt5-sip==12.8.0
 python-craigslist==1.0.7
